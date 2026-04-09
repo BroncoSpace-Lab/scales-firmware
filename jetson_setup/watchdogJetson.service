@@ -1,0 +1,19 @@
+[Unit]
+Description=Run Jetson Watchdog Python script at boot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=yourmom
+Group=yourmom
+WorkingDirectory=/home/yourmom/Desktop/watchdogJetson
+ExecStart=/usr/bin/python3 /home/yourmom/Desktop/watchdogJetson/watchdogJetson.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target
