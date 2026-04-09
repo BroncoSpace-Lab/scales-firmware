@@ -13,4 +13,4 @@ scales-jetson
 user: scales
 pass: scales
 
-wd_pin on the jetson is GPIO 13 
+wd_pin on the jetson is GPIO_32, Pin 13 on the Orin AGX

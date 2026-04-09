@@ -13,12 +13,12 @@ https://scales-docs.readthedocs.io/en/latest/imx_yocto_bsp/
 
 # How to install the watchdogjetson program on the scales-jetson
 
-We want to run the watchdogJetson program on Jetson boot, to do this we can use cron, or create a systemd service to automate the process.
+We want to run the watchdogJetson program on Jetson boot, create a systemd service to automate the process.
 
 ### systemd service
 
-Copy the watchdogJetson.service file to /etc/systemd/system/ using:
-cp watchdogJetson.service /etc/systemd/system/
+Copy the contents of the watchdogJetson.service file to a txt file, and save the txt file as watchdogJetson.service. Then copy it /etc/systemd/system/ using:
+sudo cp watchdogJetson.service /etc/systemd/system/
 
 Once its copied, run vim to edit the file
 vim watchdogJetson.service
@@ -30,7 +30,7 @@ Group=<your_group>
 WorkingDirectory=</directory/where/your/watchdogJetson.service/file/is/located>
 ExecStart=/usr/bin/python3 /directory/where/your/watchdogJetson.service/file/is/located/watchdogJetson.py
 
-Once your service file has been modified, be sure to check that everything is where you described, and then reload your systemd service
+Once your service file has been modified, be sure to check that everything is where you described, and then reload your systemd service by running
 sudo systemctl daemon-reload
 
 Now enable the service at boot
