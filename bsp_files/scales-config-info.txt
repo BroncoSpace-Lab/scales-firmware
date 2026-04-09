@@ -1,0 +1,16 @@
+# scales-leviathan test bench device setup information
+
+ip address configuration:
+scales-leviathan:  192.168.3.11
+scales-jetson: 192.168.3.10
+
+username/passwords:
+scales-leviathan:
+user: root
+pass: root
+
+scales-jetson
+user: scales
+pass: scales
+
+wd_pin on the jetson is GPIO 13 
