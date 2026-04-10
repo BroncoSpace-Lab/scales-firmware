@@ -1,39 +1,89 @@
-# How to install the scales-leviathan-layer in the base IMX8QXP Phytec BSP to bake the custom scales-leviathan linux image
+# Installing `meta-scales-leviathan` and `watchdogJetson`
 
-Copy the meta-scales-leviathan folder to
-/BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/sources
+This guide covers:
+1. Installing the `meta-scales-leviathan` layer into the base i.MX8QXP PHYTEC BSP
+2. Setting up `watchdogJetson` to run automatically at boot using `systemd`
 
-then
+---
 
-copy the /conf folder to /BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/build
-if it already exists, please replace it with this version.
+## Install the `meta-scales-leviathan` Layer in the Base i.MX8QXP PHYTEC BSP
 
-Then, follow the bitbake process for the standard image provided here:
+To bake the custom `scales-leviathan` Linux image, copy the `meta-scales-leviathan` folder into the Yocto sources directory:
+
+```bash
+cp -r meta-scales-leviathan /BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/sources/
+```
+
+Next, copy the `conf` folder into the Yocto build directory. If a `conf` folder already exists there, replace it with this version:
+
+```bash
+cp -r conf /BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/build/
+```
+
+Then follow the standard BitBake process for the image using the instructions here:
+
 https://scales-docs.readthedocs.io/en/latest/imx_yocto_bsp/
 
-# How to install the watchdogjetson program on the scales-jetson
+---
 
-We want to run the watchdogJetson program on Jetson boot, create a systemd service to automate the process.
+## Install the `watchdogJetson` Program on the Scales Jetson
 
-### systemd service
+To run the `watchdogJetson` program automatically at Jetson boot, create a `systemd` service.
 
-Copy the contents of the watchdogJetson.service file to a txt file, and save the txt file as watchdogJetson.service. Then copy it /etc/systemd/system/ using:
+### Create the `systemd` Service File
+
+Copy the contents of the `watchdogJetson.service` file into a text file and save it as:
+
+```text
+watchdogJetson.service
+```
+
+Then copy the service file into `/etc/systemd/system/`:
+
+```bash
 sudo cp watchdogJetson.service /etc/systemd/system/
+```
 
-Once its copied, run vim to edit the file
-vim watchdogJetson.service
+Open the service file for editing:
 
-Now modify the following to reflect your system directories:
+```bash
+sudo vim /etc/systemd/system/watchdogJetson.service
+```
 
+### Update the Service File
+
+Modify the following lines so they match your system:
+
+```ini
 User=<your_user_name_here>
 Group=<your_group>
-WorkingDirectory=</directory/where/your/watchdogJetson.service/file/is/located>
-ExecStart=/usr/bin/python3 /directory/where/your/watchdogJetson.service/file/is/located/watchdogJetson.py
+WorkingDirectory=</directory/where/watchdogJetson.py/is/located>
+ExecStart=/usr/bin/python3 /directory/where/watchdogJetson.py/is/located/watchdogJetson.py
+```
 
-Once your service file has been modified, be sure to check that everything is where you described, and then reload your systemd service by running
+### Example
+
+```ini
+User=luca
+Group=luca
+WorkingDirectory=/home/luca/watchdogJetson
+ExecStart=/usr/bin/python3 /home/luca/watchdogJetson/watchdogJetson.py
+```
+
+Make sure the username, group, and directory paths match your actual system configuration.
+
+### Reload `systemd`
+
+After saving the file, reload the `systemd` daemon:
+
+```bash
 sudo systemctl daemon-reload
+```
 
-Now enable the service at boot
+### Enable the Service at Boot
+
+Enable the service so it starts automatically on boot:
+
+```bash
 sudo systemctl enable watchdogjetson.service
-
- 
+```
