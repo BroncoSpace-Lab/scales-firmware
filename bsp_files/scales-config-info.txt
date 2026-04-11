@@ -13,4 +13,8 @@ scales-jetson
 user: scales
 pass: scales
 
+scales-jetson (old moonfall jetson)
+user: scales
+password scales2026
+
 wd_pin on the jetson is GPIO_32, Pin 13 on the Orin AGX
