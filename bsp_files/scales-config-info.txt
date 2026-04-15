@@ -3,6 +3,7 @@
 ip address configuration:
 scales-leviathan:  192.168.3.11
 scales-jetson: 192.168.3.10
+scales-laptop: 192.168.3.13
 
 username/passwords:
 scales-leviathan:
@@ -13,8 +14,8 @@ scales-jetson
 user: scales
 pass: scales
 
-scales-jetson (old moonfall jetson)
-user: yourmom
-password scales2026
+scales-laptop
+user: scales
+pass: #AdAstra
 
 wd_pin on the jetson is GPIO_32, Pin 13 on the Orin AGX
