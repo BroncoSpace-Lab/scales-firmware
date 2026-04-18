@@ -1,7 +1,7 @@
 # scales-leviathan test bench device setup information
 
 ip address configuration:
-scales-leviathan:  10.3.2.11
+scales-leviathan:  10.3.2.10 (eth0), 10.3.2.11 (eth1)
 scales-jetson: 10.3.2.12
 scales-laptop: 10.3.2.13
 lucid-camera: 10.3.2.8
