@@ -1,2 +1,2 @@
-phytec-headless-image-imx8qxp-scales-leviathan.rootfs-20260409035752.wic.xz filter=lfs diff=lfs merge=lfs -text
-phytec-headless-image-imx8qxp-scales-leviathan.rootfs.wic.xz filter=lfs diff=lfs merge=lfs -text
+*.wic filter=lfs diff=lfs merge=lfs -text
+*.wic.xz filter=lfs diff=lfs merge=lfs -text
