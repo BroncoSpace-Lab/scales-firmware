@@ -15,6 +15,10 @@ scales-jetson
 user: scales
 pass: scales
 
+jpl-jetson
+user: jpl-jetson
+pass: #fprime
+
 scales-laptop
 user: scales
 pass: #AdAstra
