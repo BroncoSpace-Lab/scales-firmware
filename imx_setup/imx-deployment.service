@@ -1,0 +1,29 @@
+[Unit]
+Description=fprime-scales ImxDeployment Flight Software
+# Wait for network (needed to connect to the IMX hub)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# User is root
+User=root
+WorkingDirectory=/root
+
+ExecStart=/root/ImxDeployment -a 0.0.0.0 -p 50000
+
+# Restart on crash, but not on clean exit (exit 0)
+Restart=on-failure
+RestartSec=5
+
+# Give the network and fprime-gds time to be ready before retrying hard failures
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# Log stdout/stderr to the journal (view with: journalctl -u imx-deployment -f)
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,8 +1,10 @@
 # scales-leviathan test bench device setup information
 
 ip address configuration:
-scales-leviathan:  192.168.3.11
-scales-jetson: 192.168.3.10
+scales-leviathan:  10.3.2.10 (eth0), 10.3.2.11 (eth1)
+scales-jetson: 10.3.2.12
+scales-laptop: 10.3.2.13
+lucid-camera: 10.3.2.8
 
 username/passwords:
 scales-leviathan:
@@ -12,5 +14,13 @@ pass: root
 scales-jetson
 user: scales
 pass: scales
+
+jpl-jetson
+user: jpl-jetson
+pass: #fprime
+
+scales-laptop
+user: scales
+pass: #AdAstra
 
 wd_pin on the jetson is GPIO_32, Pin 13 on the Orin AGX
