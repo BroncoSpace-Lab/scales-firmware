@@ -1,0 +1,3 @@
+[submodule "meta-scales-leviathan"]
+	path = meta-scales-leviathan
+	url = https://github.com/BroncoSpace-Lab/meta-scales-leviathan.git
