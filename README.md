@@ -8,10 +8,10 @@ This guide covers:
 
 ## Install the `meta-scales-leviathan` Layer in the Base i.MX8QXP PHYTEC BSP
 
-To bake the custom `scales-leviathan` Linux image, copy the `meta-scales-leviathan` folder into the Yocto sources directory:
+To bake the custom `scales-leviathan` Linux image, pull the `meta-scales-leviathan` folder into the Yocto sources directory:
 
 ```bash
-cp -r meta-scales-leviathan /BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/sources/
+git clone https://github.com/BroncoSpace-Lab/meta-scales-leviathan.git /BSP-Yocto-NXP-i.MX8X-PD24.1.y/yocto/sources/
 ```
 
 Next, copy the `conf` folder into the Yocto build directory. If a `conf` folder already exists there, replace it with this version:
