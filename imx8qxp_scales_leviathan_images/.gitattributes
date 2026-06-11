@@ -1,2 +1,0 @@
-*.wic filter=lfs diff=lfs merge=lfs -text
-*.wic.xz filter=lfs diff=lfs merge=lfs -text
