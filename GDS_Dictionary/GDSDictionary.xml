@@ -1,0 +1,2637 @@
+<?xml version="1.0" ?>
+<dictionary topology="JetsonDeployment" framework_version="3.6.3" project_version="3.6.3">
+  <enums>
+    <enum type="Fw::On" serialize_type="I32">
+      <item name="OFF" value="0" description="Off state"/>
+      <item name="ON" value="1" description="On state"/>
+    </enum>
+    <enum type="scalesSvc::WatchdogStates" serialize_type="U8">
+      <item name="NOT_PETTING" value="0" description="Not Petting WD"/>
+      <item name="PETTING" value="1" description="Petting WD"/>
+    </enum>
+    <enum type="scalesSvc::JetsonPowerStateID" serialize_type="U8">
+      <item name="OFF" value="0" description="Jetson is powered off"/>
+      <item name="ON" value="1" description="Jetson is powered on"/>
+      <item name="UNKNOWN" value="2" description="Power state is unknown"/>
+    </enum>
+    <enum type="scalesSvc::PowerModeID" serialize_type="U8">
+      <item name="MAX" value="0" description="Unlimited power mode"/>
+      <item name="MIN" value="1" description="15 Watts power mode"/>
+      <item name="BALANCED" value="2" description="30 Watts power mode"/>
+      <item name="EXTRA" value="3" description="50 Watts power mode"/>
+    </enum>
+    <enum type="scalesSvc::ThermalStates" serialize_type="U8">
+      <item name="IDLE" value="1" description="System in IDLE mode"/>
+      <item name="WARN" value="2" description="System in WARN mode"/>
+      <item name="FAULT" value="3" description="System in FAULT mode"/>
+    </enum>
+    <enum type="Fw::DeserialStatus" serialize_type="I32">
+      <item name="OK" value="0" description=""/>
+      <item name="BUFFER_EMPTY" value="3" description="Deserialization buffer was empty when trying to read data"/>
+      <item name="FORMAT_ERROR" value="4" description="Deserialization data had incorrect values (unexpected data types)"/>
+      <item name="SIZE_MISMATCH" value="5" description="Data was left in in the buffer, but not enough to deserialize"/>
+      <item name="TYPE_MISMATCH" value="6" description="Deserialized type ID didn&amp;apos;t match"/>
+    </enum>
+    <enum type="Svc::CmdSequencer_BlockState" serialize_type="I32">
+      <item name="BLOCK" value="0" description=""/>
+      <item name="NO_BLOCK" value="1" description=""/>
+    </enum>
+    <enum type="Svc::CmdSequencer_FileReadStage" serialize_type="I32">
+      <item name="READ_HEADER" value="0" description=""/>
+      <item name="READ_HEADER_SIZE" value="1" description=""/>
+      <item name="DESER_SIZE" value="2" description=""/>
+      <item name="DESER_NUM_RECORDS" value="3" description=""/>
+      <item name="DESER_TIME_BASE" value="4" description=""/>
+      <item name="DESER_TIME_CONTEXT" value="5" description=""/>
+      <item name="READ_SEQ_CRC" value="6" description=""/>
+      <item name="READ_SEQ_DATA" value="7" description=""/>
+      <item name="READ_SEQ_DATA_SIZE" value="8" description=""/>
+    </enum>
+    <enum type="Svc::CmdSequencer_SeqMode" serialize_type="I32">
+      <item name="STEP" value="0" description=""/>
+      <item name="AUTO" value="1" description=""/>
+    </enum>
+    <enum type="Svc::SendFileStatus" serialize_type="I32">
+      <item name="STATUS_OK" value="0" description=""/>
+      <item name="STATUS_ERROR" value="1" description=""/>
+      <item name="STATUS_INVALID" value="2" description=""/>
+      <item name="STATUS_BUSY" value="3" description=""/>
+    </enum>
+    <enum type="Svc::ActiveLogger_Enabled" serialize_type="I32">
+      <item name="ENABLED" value="0" description="Enabled state"/>
+      <item name="DISABLED" value="1" description="Disabled state"/>
+    </enum>
+    <enum type="Svc::ActiveLogger_FilterSeverity" serialize_type="I32">
+      <item name="WARNING_HI" value="0" description="Filter WARNING_HI events"/>
+      <item name="WARNING_LO" value="1" description="Filter WARNING_LO events"/>
+      <item name="COMMAND" value="2" description="Filter COMMAND events"/>
+      <item name="ACTIVITY_HI" value="3" description="Filter ACTIVITY_HI events"/>
+      <item name="ACTIVITY_LO" value="4" description="Filter ACTIVITY_LO events"/>
+      <item name="DIAGNOSTIC" value="5" description="Filter DIAGNOSTIC events"/>
+    </enum>
+    <enum type="Svc::PrmDb_PrmReadError" serialize_type="I32">
+      <item name="OPEN" value="0" description=""/>
+      <item name="DELIMITER" value="1" description=""/>
+      <item name="DELIMITER_SIZE" value="2" description=""/>
+      <item name="DELIMITER_VALUE" value="3" description=""/>
+      <item name="RECORD_SIZE" value="4" description=""/>
+      <item name="RECORD_SIZE_SIZE" value="5" description=""/>
+      <item name="RECORD_SIZE_VALUE" value="6" description=""/>
+      <item name="PARAMETER_ID" value="7" description=""/>
+      <item name="PARAMETER_ID_SIZE" value="8" description=""/>
+      <item name="PARAMETER_VALUE" value="9" description=""/>
+      <item name="PARAMETER_VALUE_SIZE" value="10" description=""/>
+    </enum>
+    <enum type="Svc::PrmDb_PrmWriteError" serialize_type="I32">
+      <item name="OPEN" value="0" description=""/>
+      <item name="DELIMITER" value="1" description=""/>
+      <item name="DELIMITER_SIZE" value="2" description=""/>
+      <item name="RECORD_SIZE" value="3" description=""/>
+      <item name="RECORD_SIZE_SIZE" value="4" description=""/>
+      <item name="PARAMETER_ID" value="5" description=""/>
+      <item name="PARAMETER_ID_SIZE" value="6" description=""/>
+      <item name="PARAMETER_VALUE" value="7" description=""/>
+      <item name="PARAMETER_VALUE_SIZE" value="8" description=""/>
+    </enum>
+    <enum type="Fw::Enabled" serialize_type="I32">
+      <item name="DISABLED" value="0" description="Disabled state"/>
+      <item name="ENABLED" value="1" description="Enabled state"/>
+    </enum>
+    <enum type="Svc::SystemResourceEnabled" serialize_type="I32">
+      <item name="DISABLED" value="0" description=""/>
+      <item name="ENABLED" value="1" description=""/>
+    </enum>
+    <enum type="Drv::PollStatus" serialize_type="I32">
+      <item name="POLL_OK" value="0" description="Poll successfully received data"/>
+      <item name="POLL_RETRY" value="1" description="No data available, retry later"/>
+      <item name="POLL_ERROR" value="2" description="Error received when polling"/>
+    </enum>
+    <enum type="Drv::RecvStatus" serialize_type="I32">
+      <item name="RECV_OK" value="0" description="Receive worked as expected"/>
+      <item name="RECV_NO_DATA" value="1" description="Receive worked, but there was no data"/>
+      <item name="RECV_ERROR" value="2" description="Receive error occurred retrying may succeed"/>
+    </enum>
+    <enum type="Drv::SendStatus" serialize_type="I32">
+      <item name="SEND_OK" value="0" description="Send worked as expected"/>
+      <item name="SEND_RETRY" value="1" description="Data send should be retried"/>
+      <item name="SEND_ERROR" value="2" description="Send error occurred retrying may succeed"/>
+    </enum>
+    <enum type="Svc::QueueType" serialize_type="I32">
+      <item name="COM_QUEUE" value="0" description=""/>
+      <item name="BUFFER_QUEUE" value="1" description=""/>
+    </enum>
+    <enum type="Fw::Success" serialize_type="I32">
+      <item name="FAILURE" value="0" description="Representing failure"/>
+      <item name="SUCCESS" value="1" description="Representing success"/>
+    </enum>
+    <enum type="Os::FileStatus" serialize_type="I32">
+      <item name="OP_OK" value="0" description="Operation was successful"/>
+      <item name="DOESNT_EXIST" value="1" description="File doesn&amp;apos;t exist (for read)"/>
+      <item name="NO_SPACE" value="2" description="No space left"/>
+      <item name="NO_PERMISSION" value="3" description="No permission to read/write file"/>
+      <item name="BAD_SIZE" value="4" description="Invalid size parameter"/>
+      <item name="NOT_OPENED" value="5" description="file hasn&amp;apos;t been opened yet"/>
+      <item name="FILE_EXISTS" value="6" description="file already exist (for CREATE with O_EXCL enabled)"/>
+      <item name="NOT_SUPPORTED" value="7" description="Kernel or file system does not support operation"/>
+      <item name="INVALID_MODE" value="8" description="Mode for file access is invalid for current operation"/>
+      <item name="INVALID_ARGUMENT" value="9" description="Invalid argument passed in"/>
+      <item name="OTHER_ERROR" value="10" description="A catch-all for other errors. Have to look in implementation-specific code"/>
+    </enum>
+    <enum type="Drv::GpioStatus" serialize_type="I32">
+      <item name="OP_OK" value="0" description="Operation succeeded"/>
+      <item name="NOT_OPENED" value="1" description="Pin was never opened"/>
+      <item name="INVALID_MODE" value="2" description="Operation not permitted with current configuration"/>
+      <item name="UNKNOWN_ERROR" value="3" description="An unknown error occurred"/>
+    </enum>
+    <enum type="Fw::Logic" serialize_type="I32">
+      <item name="LOW" value="0" description="Logic low state"/>
+      <item name="HIGH" value="1" description="Logic high state"/>
+    </enum>
+    <enum type="Fw::CmdResponse" serialize_type="I32">
+      <item name="OK" value="0" description="Command successfully executed"/>
+      <item name="INVALID_OPCODE" value="1" description="Invalid opcode dispatched"/>
+      <item name="VALIDATION_ERROR" value="2" description="Command failed validation"/>
+      <item name="FORMAT_ERROR" value="3" description="Command failed to deserialize"/>
+      <item name="EXECUTION_ERROR" value="4" description="Command had execution error"/>
+      <item name="BUSY" value="5" description="Component busy"/>
+    </enum>
+    <enum type="Fw::LogSeverity" serialize_type="I32">
+      <item name="FATAL" value="1" description="A fatal non-recoverable event"/>
+      <item name="WARNING_HI" value="2" description="A serious but recoverable event"/>
+      <item name="WARNING_LO" value="3" description="A less serious but recoverable event"/>
+      <item name="COMMAND" value="4" description="An activity related to commanding"/>
+      <item name="ACTIVITY_HI" value="5" description="Important informational events"/>
+      <item name="ACTIVITY_LO" value="6" description="Less important informational events"/>
+      <item name="DIAGNOSTIC" value="7" description="Software diagnostic events"/>
+    </enum>
+    <enum type="Fw::ParamValid" serialize_type="I32">
+      <item name="UNINIT" value="0" description=""/>
+      <item name="VALID" value="1" description=""/>
+      <item name="INVALID" value="2" description=""/>
+      <item name="DEFAULT" value="3" description=""/>
+    </enum>
+    <enum type="Drv::I2cStatus" serialize_type="I32">
+      <item name="I2C_OK" value="0" description="Transaction okay"/>
+      <item name="I2C_ADDRESS_ERR" value="1" description="I2C address invalid"/>
+      <item name="I2C_WRITE_ERR" value="2" description="I2C write failed"/>
+      <item name="I2C_READ_ERR" value="3" description="I2C read failed"/>
+      <item name="I2C_OPEN_ERR" value="4" description="I2C driver failed to open device"/>
+      <item name="I2C_OTHER_ERR" value="5" description="Other errors that don&amp;apos;t fit"/>
+    </enum>
+  </enums>
+  <serializables>
+    <serializable type="Svc::SendFileResponse">
+      <members>
+        <member name="status" format_specifier="%s" default="Svc::SendFileStatus::STATUS_OK" type="Svc::SendFileStatus"/>
+        <member name="context" format_specifier="%u" default="0" type="U32"/>
+      </members>
+    </serializable>
+    <serializable type="scalesSvc::ThermalReading">
+      <members>
+        <member name="temperature" format_specifier="%g" description="Temperature in degrees Celsius" default="0.0f" type="F32"/>
+        <member name="tempState" format_specifier="%s" description="State of the sensor" default="scalesSvc::ThermalStates::IDLE" type="scalesSvc::ThermalStates"/>
+        <member name="sensorId" format_specifier="%u" description="ID of the thermal sensor" default="0" type="U8"/>
+        <member name="location" format_specifier="%s" description="Description of sensor location" default="Fw::String(&quot;&quot;)" len="32" type="string"/>
+        <member name="timestamp" format_specifier="%u" description="Timestamp of reading" default="0" type="U32"/>
+      </members>
+    </serializable>
+    <serializable type="scalesSvc::PowerReading">
+      <members>
+        <member name="voltage" format_specifier="%g" description="Voltage reading in volts" default="0.0f" type="F32"/>
+        <member name="current" format_specifier="%g" description="Current reading in amps" default="0.0f" type="F32"/>
+        <member name="power" format_specifier="%g" description="Power consumption in watts" default="0.0f" type="F32"/>
+        <member name="sourceId" format_specifier="%u" description="ID of the power source/sensor" default="0" type="U8"/>
+        <member name="timestamp" format_specifier="%u" description="Timestamp of reading" default="0" type="U32"/>
+      </members>
+    </serializable>
+  </serializables>
+  <arrays>
+    <array name="Svc::BuffQueueDepth" type="U32" type_id="0x8FBB80AC" size="1" format="%u">
+      <defaults>
+        <default value="0"/>
+      </defaults>
+    </array>
+    <array name="Svc::ComQueueDepth" type="U32" type_id="0x4CF2A800" size="2" format="%u">
+      <defaults>
+        <default value="0"/>
+        <default value="0"/>
+      </defaults>
+    </array>
+  </arrays>
+  <commands>
+    <command component="jetson_lucidCamera" mnemonic="SAVE_PNG" opcode="0x11400" description="TODO">
+      <args/>
+    </command>
+    <command component="jetson_lucidCamera" mnemonic="SETUP_CAMERA" opcode="0x11401">
+      <args/>
+    </command>
+    <command component="jetson_lucidCamera" mnemonic="SET_EXPOSURE" opcode="0x11402">
+      <args>
+        <arg name="param_name" type="F64"/>
+      </args>
+    </command>
+    <command component="jetson_lucidCamera" mnemonic="SET_GAIN" opcode="0x11403">
+      <args>
+        <arg name="param_name" type="F64"/>
+      </args>
+    </command>
+    <command component="jetson_mlManager" mnemonic="SET_ML_PATH" opcode="0x11500" description="Set the file path for the ML model.">
+      <args>
+        <arg name="path" len="254" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_mlManager" mnemonic="SET_INFERENCE_PATH" opcode="0x11501" description="Set the file path for data to be inferenced.">
+      <args>
+        <arg name="path" len="254" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_mlManager" mnemonic="MULTI_INFERENCE" opcode="0x11502" description="Perform inference on multiple images in the specified path.">
+      <args/>
+    </command>
+    <command component="jetson_mlManager" mnemonic="CLEAR_INFERENCE_PATH" opcode="0x11503" description="Clear the inference path.">
+      <args/>
+    </command>
+    <command component="jetson_pwrModeManager" mnemonic="SET_POWER_MODE" opcode="0x11702" description="Command to set the Jetson power mode">
+      <args>
+        <arg name="mode" description="
+          Power mode to set (15W, 30W, or 50W)
+          " type="scalesSvc::PowerModeID"/>
+      </args>
+    </command>
+    <command component="jetson_pwrModeManager" mnemonic="GET_POWER_MODE" opcode="0x11703" description="Command to request current power mode">
+      <args/>
+    </command>
+    <command component="jetson_pwrModeManager" mnemonic="SET_JETSON_POWER_STATE" opcode="0x11704" description="Command to locally request Jetson shutdown">
+      <args>
+        <arg name="jetsonState" description="
+          Requested power state (on/off)
+          " type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </command>
+    <command component="jetson_pwrModeManager" mnemonic="PWR_MODE_REQ_PRM_SET" opcode="0x11700" description="Requested power mode parameter parameter set">
+      <args>
+        <arg name="val" type="U8"/>
+      </args>
+    </command>
+    <command component="jetson_pwrModeManager" mnemonic="PWR_MODE_REQ_PRM_SAVE" opcode="0x11701" description="Requested power mode parameter parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_IDLE_LOW_PRM_SET" opcode="0x11801" description="IDLE Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_IDLE_LOW_PRM_SAVE" opcode="0x11802" description="IDLE Low temperature threshold parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_IDLE_HIGH_PRM_SET" opcode="0x11803" description="IDLE High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_IDLE_HIGH_PRM_SAVE" opcode="0x11804" description="IDLE High temperature threshold parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_WARN_LOW_PRM_SET" opcode="0x11805" description="WARNING Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_WARN_LOW_PRM_SAVE" opcode="0x11806" description="WARNING Low temperature threshold parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_WARN_HIGH_PRM_SET" opcode="0x11807" description="WARNING High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_WARN_HIGH_PRM_SAVE" opcode="0x11808" description="WARNING High temperature threshold parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_FAULT_LOW_PRM_SET" opcode="0x11809" description="FAULT Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_FAULT_LOW_PRM_SAVE" opcode="0x11810" description="FAULT Low temperature threshold parameter save"/>
+    <command component="jetson_thermalManager" mnemonic="JETSON_FAULT_HIGH_PRM_SET" opcode="0x11811" description="FAULT High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="jetson_thermalManager" mnemonic="JETSON_FAULT_HIGH_PRM_SAVE" opcode="0x11812" description="FAULT High temperature threshold parameter save"/>
+    <command component="jetson_cmdDisp" mnemonic="CMD_NO_OP" opcode="0x15500" description="No-op command">
+      <args/>
+    </command>
+    <command component="jetson_cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x15501" description="No-op string command">
+      <args>
+        <arg name="arg1" description="
+          The String command argument
+          " len="40" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_cmdDisp" mnemonic="CMD_TEST_CMD_1" opcode="0x15502" description="No-op command">
+      <args>
+        <arg name="arg1" description="
+          The I32 command argument
+          " type="I32"/>
+        <arg name="arg2" description="
+          The F32 command argument
+          " type="F32"/>
+        <arg name="arg3" description="
+          The U8 command argument
+          " type="U8"/>
+      </args>
+    </command>
+    <command component="jetson_cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x15503" description="Clear command tracking info to recover from components not returning status">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_RUN" opcode="0x15600" description="Run a command sequence file">
+      <args>
+        <arg name="fileName" description="
+          The name of the sequence file
+          " len="240" type="string"/>
+        <arg name="block" description="
+          Return command status when complete or not
+          " type="Svc::CmdSequencer_BlockState"/>
+      </args>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_VALIDATE" opcode="0x15601" description="Validate a command sequence file">
+      <args>
+        <arg name="fileName" description="
+          The name of the sequence file
+          " len="240" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_CANCEL" opcode="0x15602" description="Cancel a command sequence">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_START" opcode="0x15603" description="Start running a command sequence">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_STEP" opcode="0x15604" description="Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_AUTO" opcode="0x15605" description="Set the run mode to AUTO.">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_MANUAL" opcode="0x15606" description="Set the run mode to MANUAL.">
+      <args/>
+    </command>
+    <command component="jetson_cmdSeq" mnemonic="CS_JOIN_WAIT" opcode="0x15607" description="Wait for sequences that are running to finish. Allow user to run multiple seq files in SEQ_NO_BLOCK mode then wait for them to finish before allowing more seq run request.">
+      <args/>
+    </command>
+    <command component="jetson_fileDownlink" mnemonic="SendFile" opcode="0x15800" description="Read a named file off the disk. Divide it into packets and send the packets for transmission to the ground.">
+      <args>
+        <arg name="sourceFileName" description="
+          The name of the on-board file to send
+          " len="100" type="string"/>
+        <arg name="destFileName" description="
+          The name of the destination file on the ground
+          " len="100" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileDownlink" mnemonic="Cancel" opcode="0x15801" description="Cancel the downlink in progress, if any">
+      <args/>
+    </command>
+    <command component="jetson_fileDownlink" mnemonic="SendPartial" opcode="0x15802" description="Read a named file off the disk from a starting position. Divide it into packets and send the packets for transmission to the ground.">
+      <args>
+        <arg name="sourceFileName" description="
+          The name of the on-board file to send
+          " len="100" type="string"/>
+        <arg name="destFileName" description="
+          The name of the destination file on the ground
+          " len="100" type="string"/>
+        <arg name="startOffset" description="
+          Starting offset of the source file
+          " type="U32"/>
+        <arg name="length" description="
+          Number of bytes to send from starting offset. Length of 0 implies until the end of the file
+          " type="U32"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="CreateDirectory" opcode="0x15900" description="Create a directory">
+      <args>
+        <arg name="dirName" description="
+          The directory to create
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="MoveFile" opcode="0x15901" description="Move a file">
+      <args>
+        <arg name="sourceFileName" description="
+          The source file name
+          " len="256" type="string"/>
+        <arg name="destFileName" description="
+          The destination file name
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="RemoveDirectory" opcode="0x15902" description="Remove a directory, which must be empty">
+      <args>
+        <arg name="dirName" description="
+          The directory to remove
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="RemoveFile" opcode="0x15903" description="Remove a file">
+      <args>
+        <arg name="fileName" description="
+          The file to remove
+          " len="256" type="string"/>
+        <arg name="ignoreErrors" description="
+          Ignore nonexistent files
+          " type="bool"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="ShellCommand" opcode="0x15904" description="Perform a Linux shell command and write the output to a log file.">
+      <args>
+        <arg name="command" description="
+          The shell command string
+          " len="256" type="string"/>
+        <arg name="logFileName" description="
+          The name of the log file
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="AppendFile" opcode="0x15905" description="Append 1 file's contents to the end of another.">
+      <args>
+        <arg name="source" description="
+          The name of the file to take content from
+          " len="256" type="string"/>
+        <arg name="target" description="
+          The name of the file to append to
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_fileManager" mnemonic="FileSize" opcode="0x15906">
+      <args>
+        <arg name="fileName" description="
+          The file to get the size of
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="jetson_eventLogger" mnemonic="SET_EVENT_FILTER" opcode="0x15b00" description="Set filter for reporting events. Events are not stored in component.">
+      <args>
+        <arg name="filterLevel" description="
+          Filter level
+          " type="Svc::ActiveLogger_FilterSeverity"/>
+        <arg name="filterEnabled" description="
+          Filter state
+          " type="Svc::ActiveLogger_Enabled"/>
+      </args>
+    </command>
+    <command component="jetson_eventLogger" mnemonic="SET_ID_FILTER" opcode="0x15b02" description="Filter a particular ID">
+      <args>
+        <arg name="ID" type="U32"/>
+        <arg name="idFilterEnabled" description="
+          ID filter state
+          " type="Svc::ActiveLogger_Enabled"/>
+      </args>
+    </command>
+    <command component="jetson_eventLogger" mnemonic="DUMP_FILTER_STATE" opcode="0x15b03" description="Dump the filter states via events">
+      <args/>
+    </command>
+    <command component="jetson_prmDb" mnemonic="PRM_SAVE_FILE" opcode="0x15d00" description="Command to save parameter image to file. Uses file name passed to constructor">
+      <args/>
+    </command>
+    <command component="jetson_health" mnemonic="HLTH_ENABLE" opcode="0x16000" description="A command to enable or disable health checks">
+      <args>
+        <arg name="enable" description="
+          whether or not health checks are enabled
+          " type="Fw::Enabled"/>
+      </args>
+    </command>
+    <command component="jetson_health" mnemonic="HLTH_PING_ENABLE" opcode="0x16001" description="Ignore a particular ping entry">
+      <args>
+        <arg name="entry" description="
+          The entry to enable/disable
+          " len="40" type="string"/>
+        <arg name="enable" description="
+          whether or not a port is pinged
+          " type="Fw::Enabled"/>
+      </args>
+    </command>
+    <command component="jetson_health" mnemonic="HLTH_CHNG_PING" opcode="0x16002" description="Change ping value">
+      <args>
+        <arg name="entry" description="
+          The entry to modify
+          " len="40" type="string"/>
+        <arg name="warningValue" description="
+          Ping warning threshold
+          " type="U32"/>
+        <arg name="fatalValue" description="
+          Ping fatal threshold
+          " type="U32"/>
+      </args>
+    </command>
+    <command component="jetson_systemResources" mnemonic="ENABLE" opcode="0x17a00" description="A command to enable or disable system resource telemetry">
+      <args>
+        <arg name="enable" description="
+          whether or not system resource telemetry is enabled
+          " type="Svc::SystemResourceEnabled"/>
+      </args>
+    </command>
+    <command component="jetson_proxySequencer" mnemonic="TODO" opcode="0x19700" description="TODO">
+      <args/>
+    </command>
+    <command component="jetson_proxyGroundInterface" mnemonic="TODO" opcode="0x19800" description="TODO">
+      <args/>
+    </command>
+    <command component="imx_cmdDisp" mnemonic="CMD_NO_OP" opcode="0x500" description="No-op command">
+      <args/>
+    </command>
+    <command component="imx_cmdDisp" mnemonic="CMD_NO_OP_STRING" opcode="0x501" description="No-op string command">
+      <args>
+        <arg name="arg1" description="
+          The String command argument
+          " len="40" type="string"/>
+      </args>
+    </command>
+    <command component="imx_cmdDisp" mnemonic="CMD_TEST_CMD_1" opcode="0x502" description="No-op command">
+      <args>
+        <arg name="arg1" description="
+          The I32 command argument
+          " type="I32"/>
+        <arg name="arg2" description="
+          The F32 command argument
+          " type="F32"/>
+        <arg name="arg3" description="
+          The U8 command argument
+          " type="U8"/>
+      </args>
+    </command>
+    <command component="imx_cmdDisp" mnemonic="CMD_CLEAR_TRACKING" opcode="0x503" description="Clear command tracking info to recover from components not returning status">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_RUN" opcode="0x600" description="Run a command sequence file">
+      <args>
+        <arg name="fileName" description="
+          The name of the sequence file
+          " len="240" type="string"/>
+        <arg name="block" description="
+          Return command status when complete or not
+          " type="Svc::CmdSequencer_BlockState"/>
+      </args>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_VALIDATE" opcode="0x601" description="Validate a command sequence file">
+      <args>
+        <arg name="fileName" description="
+          The name of the sequence file
+          " len="240" type="string"/>
+      </args>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_CANCEL" opcode="0x602" description="Cancel a command sequence">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_START" opcode="0x603" description="Start running a command sequence">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_STEP" opcode="0x604" description="Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_AUTO" opcode="0x605" description="Set the run mode to AUTO.">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_MANUAL" opcode="0x606" description="Set the run mode to MANUAL.">
+      <args/>
+    </command>
+    <command component="imx_cmdSeq" mnemonic="CS_JOIN_WAIT" opcode="0x607" description="Wait for sequences that are running to finish. Allow user to run multiple seq files in SEQ_NO_BLOCK mode then wait for them to finish before allowing more seq run request.">
+      <args/>
+    </command>
+    <command component="imx_fileDownlink" mnemonic="SendFile" opcode="0x800" description="Read a named file off the disk. Divide it into packets and send the packets for transmission to the ground.">
+      <args>
+        <arg name="sourceFileName" description="
+          The name of the on-board file to send
+          " len="100" type="string"/>
+        <arg name="destFileName" description="
+          The name of the destination file on the ground
+          " len="100" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileDownlink" mnemonic="Cancel" opcode="0x801" description="Cancel the downlink in progress, if any">
+      <args/>
+    </command>
+    <command component="imx_fileDownlink" mnemonic="SendPartial" opcode="0x802" description="Read a named file off the disk from a starting position. Divide it into packets and send the packets for transmission to the ground.">
+      <args>
+        <arg name="sourceFileName" description="
+          The name of the on-board file to send
+          " len="100" type="string"/>
+        <arg name="destFileName" description="
+          The name of the destination file on the ground
+          " len="100" type="string"/>
+        <arg name="startOffset" description="
+          Starting offset of the source file
+          " type="U32"/>
+        <arg name="length" description="
+          Number of bytes to send from starting offset. Length of 0 implies until the end of the file
+          " type="U32"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="CreateDirectory" opcode="0x900" description="Create a directory">
+      <args>
+        <arg name="dirName" description="
+          The directory to create
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="MoveFile" opcode="0x901" description="Move a file">
+      <args>
+        <arg name="sourceFileName" description="
+          The source file name
+          " len="256" type="string"/>
+        <arg name="destFileName" description="
+          The destination file name
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="RemoveDirectory" opcode="0x902" description="Remove a directory, which must be empty">
+      <args>
+        <arg name="dirName" description="
+          The directory to remove
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="RemoveFile" opcode="0x903" description="Remove a file">
+      <args>
+        <arg name="fileName" description="
+          The file to remove
+          " len="256" type="string"/>
+        <arg name="ignoreErrors" description="
+          Ignore nonexistent files
+          " type="bool"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="ShellCommand" opcode="0x904" description="Perform a Linux shell command and write the output to a log file.">
+      <args>
+        <arg name="command" description="
+          The shell command string
+          " len="256" type="string"/>
+        <arg name="logFileName" description="
+          The name of the log file
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="AppendFile" opcode="0x905" description="Append 1 file's contents to the end of another.">
+      <args>
+        <arg name="source" description="
+          The name of the file to take content from
+          " len="256" type="string"/>
+        <arg name="target" description="
+          The name of the file to append to
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_fileManager" mnemonic="FileSize" opcode="0x906">
+      <args>
+        <arg name="fileName" description="
+          The file to get the size of
+          " len="256" type="string"/>
+      </args>
+    </command>
+    <command component="imx_eventLogger" mnemonic="SET_EVENT_FILTER" opcode="0xb00" description="Set filter for reporting events. Events are not stored in component.">
+      <args>
+        <arg name="filterLevel" description="
+          Filter level
+          " type="Svc::ActiveLogger_FilterSeverity"/>
+        <arg name="filterEnabled" description="
+          Filter state
+          " type="Svc::ActiveLogger_Enabled"/>
+      </args>
+    </command>
+    <command component="imx_eventLogger" mnemonic="SET_ID_FILTER" opcode="0xb02" description="Filter a particular ID">
+      <args>
+        <arg name="ID" type="U32"/>
+        <arg name="idFilterEnabled" description="
+          ID filter state
+          " type="Svc::ActiveLogger_Enabled"/>
+      </args>
+    </command>
+    <command component="imx_eventLogger" mnemonic="DUMP_FILTER_STATE" opcode="0xb03" description="Dump the filter states via events">
+      <args/>
+    </command>
+    <command component="imx_prmDb" mnemonic="PRM_SAVE_FILE" opcode="0xd00" description="Command to save parameter image to file. Uses file name passed to constructor">
+      <args/>
+    </command>
+    <command component="imx_health" mnemonic="HLTH_ENABLE" opcode="0x1000" description="A command to enable or disable health checks">
+      <args>
+        <arg name="enable" description="
+          whether or not health checks are enabled
+          " type="Fw::Enabled"/>
+      </args>
+    </command>
+    <command component="imx_health" mnemonic="HLTH_PING_ENABLE" opcode="0x1001" description="Ignore a particular ping entry">
+      <args>
+        <arg name="entry" description="
+          The entry to enable/disable
+          " len="40" type="string"/>
+        <arg name="enable" description="
+          whether or not a port is pinged
+          " type="Fw::Enabled"/>
+      </args>
+    </command>
+    <command component="imx_health" mnemonic="HLTH_CHNG_PING" opcode="0x1002" description="Change ping value">
+      <args>
+        <arg name="entry" description="
+          The entry to modify
+          " len="40" type="string"/>
+        <arg name="warningValue" description="
+          Ping warning threshold
+          " type="U32"/>
+        <arg name="fatalValue" description="
+          Ping fatal threshold
+          " type="U32"/>
+      </args>
+    </command>
+    <command component="imx_systemResources" mnemonic="ENABLE" opcode="0x2a00" description="A command to enable or disable system resource telemetry">
+      <args>
+        <arg name="enable" description="
+          whether or not system resource telemetry is enabled
+          " type="Svc::SystemResourceEnabled"/>
+      </args>
+    </command>
+    <command component="imx_proxySequencer" mnemonic="TODO" opcode="0x4700" description="TODO">
+      <args/>
+    </command>
+    <command component="imx_proxyGroundInterface" mnemonic="TODO" opcode="0x4800" description="TODO">
+      <args/>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_IDLE_LOW_PRM_SET" opcode="0x5101" description="IMX_CPU_IDLE_LOW Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_IDLE_LOW_PRM_SAVE" opcode="0x5102" description="IMX_CPU_IDLE_LOW Parameter parameter save"/>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_IDLE_HIGH_PRM_SET" opcode="0x5103" description="IMX_CPU_IDLE_HIGH Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_IDLE_HIGH_PRM_SAVE" opcode="0x5104" description="IMX_CPU_IDLE_HIGH Parameter parameter save"/>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_WARN_LOW_PRM_SET" opcode="0x5105" description="IMX_CPU_WARN_LOW Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_WARN_LOW_PRM_SAVE" opcode="0x5106" description="IMX_CPU_WARN_LOW Parameter parameter save"/>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_WARN_HIGH_PRM_SET" opcode="0x5107" description="IMX_CPU_WARN_HIGH Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_WARN_HIGH_PRM_SAVE" opcode="0x5108" description="IMX_CPU_WARN_HIGH Parameter parameter save"/>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_FAULT_LOW_PRM_SET" opcode="0x5109" description="IMX_CPU_FAULT_LOW Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_FAULT_LOW_PRM_SAVE" opcode="0x5110" description="IMX_CPU_FAULT_LOW Parameter parameter save"/>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_FAULT_HIGH_PRM_SET" opcode="0x5111" description="IMX_CPU_FAULT_HIGH Parameter parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_thermalManager" mnemonic="IMX_CPU_FAULT_HIGH_PRM_SAVE" opcode="0x5112" description="IMX_CPU_FAULT_HIGH Parameter parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_IDLE_LOW_PRM_SET" opcode="0x5301" description="IDLE Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_IDLE_LOW_PRM_SAVE" opcode="0x5302" description="IDLE Low temperature threshold parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_IDLE_HIGH_PRM_SET" opcode="0x5303" description="IDLE High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_IDLE_HIGH_PRM_SAVE" opcode="0x5304" description="IDLE High temperature threshold parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_WARN_LOW_PRM_SET" opcode="0x5305" description="WARNING Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_WARN_LOW_PRM_SAVE" opcode="0x5306" description="WARNING Low temperature threshold parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_WARN_HIGH_PRM_SET" opcode="0x5307" description="WARNING High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_WARN_HIGH_PRM_SAVE" opcode="0x5308" description="WARNING High temperature threshold parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_FAULT_LOW_PRM_SET" opcode="0x5309" description="FAULT Low temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_FAULT_LOW_PRM_SAVE" opcode="0x5310" description="FAULT Low temperature threshold parameter save"/>
+    <command component="imx_mcpManager" mnemonic="MCP_FAULT_HIGH_PRM_SET" opcode="0x5311" description="FAULT High temperature threshold parameter set">
+      <args>
+        <arg name="val" type="F32"/>
+      </args>
+    </command>
+    <command component="imx_mcpManager" mnemonic="MCP_FAULT_HIGH_PRM_SAVE" opcode="0x5312" description="FAULT High temperature threshold parameter save"/>
+    <command component="imx_perifBoardManager" mnemonic="powerOn" opcode="0x5400" description="command to set the state of the gpio
+      Sets the state of the GPIO to high">
+      <args>
+        <arg name="highLow" type="Fw::On"/>
+      </args>
+    </command>
+    <command component="imx_perifBoardManager" mnemonic="offTimeSec_PRM_SET" opcode="0x5401" description="Parameter to set the time to wait before re-powering on the board parameter set">
+      <args>
+        <arg name="val" type="U32"/>
+      </args>
+    </command>
+    <command component="imx_perifBoardManager" mnemonic="offTimeSec_PRM_SAVE" opcode="0x5402" description="Parameter to set the time to wait before re-powering on the board parameter save"/>
+    <command component="imx_jetsonManager" mnemonic="REQUEST_POWER_MODE" opcode="0x5500" description="Command to request a power mode change on the Jetson">
+      <args>
+        <arg name="mode" description="
+          Requested power mode
+          " type="scalesSvc::PowerModeID"/>
+      </args>
+    </command>
+    <command component="imx_jetsonManager" mnemonic="REQUEST_JETSON_POWER_STATE" opcode="0x5501" description="Command to request a power state change (on/off) for the Jetson">
+      <args>
+        <arg name="jetsonState" description="
+          Requested power state (on/off)
+          " type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </command>
+  </commands>
+  <events>
+    <event component="jetson_lucidCamera" name="DebugLogEvent" id="0x11400" severity="ACTIVITY_HI" format_string="%s">
+      <args>
+        <arg name="message" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_lucidCamera" name="FileSendError" id="0x1142a" severity="WARNING_HI" format_string="Error sending DP file %s, stat %s. Halting xmit.">
+      <args>
+        <arg name="file" description="The file" len="80" type="string"/>
+        <arg name="stat" type="Svc::SendFileStatus"/>
+      </args>
+    </event>
+    <event component="jetson_mlManager" name="MLSet" id="0x11500" severity="ACTIVITY_HI" description="Event to output ML path set." format_string="ML Path Set: %s">
+      <args>
+        <arg name="status" len="254" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_mlManager" name="InferenceSet" id="0x11501" severity="ACTIVITY_HI" description="Event to output inference path set." format_string="Inference Path Set: %s">
+      <args>
+        <arg name="status" len="254" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_mlManager" name="InferenceOutput" id="0x11502" severity="ACTIVITY_HI" description="Event to output inference results." format_string="%s is an image of a %s">
+      <args>
+        <arg name="path" len="128" type="string"/>
+        <arg name="classification" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_watchdogManager" name="WatchdogState" id="0x11600" severity="ACTIVITY_HI" description="event that updates everytime watchdog is pet" format_string="Watchdog is %s">
+      <args>
+        <arg name="state" type="Fw::On"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="POWER_MODE_CHANGED" id="0x11700" severity="ACTIVITY_HI" description="Event indicating power mode change successful" format_string="Jetson power mode changed to %s">
+      <args>
+        <arg name="level" description="The new power mode" type="scalesSvc::PowerModeID"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="POWER_MODE_CHANGE_FAILED" id="0x11701" severity="WARNING_HI" description="Event indicating power mode change failed" format_string="Failed to change Jetson power mode to %s: %s">
+      <args>
+        <arg name="requested" description="The requested power mode" type="scalesSvc::PowerModeID"/>
+        <arg name="reason" description="Reason for failure" len="64" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="POWER_MODE_REQUEST_RECEIVED" id="0x11702" severity="ACTIVITY_HI" description="Event emitted when a power mode change request arrives via the hub port (from IMX PowerManager)" format_string="Jetson received power mode change request: %s">
+      <args>
+        <arg name="requested" description="The requested power mode" type="scalesSvc::PowerModeID"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="JETSON_POWER_STATE_REQUEST_RECEIVED" id="0x11703" severity="ACTIVITY_HI" description="Event emitted when a Jetson power state change request arrives via the hub port (from IMX PowerManager)" format_string="Jetson received power state change request: %s">
+      <args>
+        <arg name="requested" description="The requested Jetson power state (on/off)" type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="JETSON_SHUTDOWN_STARTED" id="0x11704" severity="ACTIVITY_HI" description="Event indicating Jetson is beginning shutdown" format_string="Jetson shutdown initiated due to power state change request: %s">
+      <args>
+        <arg name="requested" description="The requested Jetson power state (on/off)" type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </event>
+    <event component="jetson_pwrModeManager" name="JETSON_POWER_STATE_CHANGE_FAILED" id="0x11705" severity="WARNING_HI" description="Event indicating Jetson power state request failed" format_string="Jetson power state change request %s failed: %s">
+      <args>
+        <arg name="requested" description="The requested Jetson power state (on/off)" type="scalesSvc::JetsonPowerStateID"/>
+        <arg name="reason" description="Reason for failure" len="64" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_rateGroup1" name="RateGroupStarted" id="0x15200" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="jetson_rateGroup1" name="RateGroupCycleSlip" id="0x15201" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_rateGroup2" name="RateGroupStarted" id="0x15300" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="jetson_rateGroup2" name="RateGroupCycleSlip" id="0x15301" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_rateGroup3" name="RateGroupStarted" id="0x15400" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="jetson_rateGroup3" name="RateGroupCycleSlip" id="0x15401" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="OpCodeRegistered" id="0x15500" severity="DIAGNOSTIC" format_string="Opcode 0x%x registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" description="The opcode to register" type="U32"/>
+        <arg name="port" description="The registration port" type="I32"/>
+        <arg name="slot" description="The dispatch slot it was placed in" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="OpCodeDispatched" id="0x15501" severity="COMMAND" description="Op code dispatched event" format_string="Opcode 0x%x dispatched to port %d">
+      <args>
+        <arg name="Opcode" description="The opcode dispatched" type="U32"/>
+        <arg name="port" description="The port dispatched to" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="OpCodeCompleted" id="0x15502" severity="COMMAND" description="Op code completed event" format_string="Opcode 0x%x completed">
+      <args>
+        <arg name="Opcode" description="The I32 command argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="OpCodeError" id="0x15503" severity="COMMAND" description="Op code completed with error event" format_string="Opcode 0x%x completed with error %s">
+      <args>
+        <arg name="Opcode" description="The opcode with the error" type="U32"/>
+        <arg name="error" description="The error value" type="Fw::CmdResponse"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="MalformedCommand" id="0x15504" severity="WARNING_HI" description="Received a malformed command packet" format_string="Received malformed command packet. Status: %s">
+      <args>
+        <arg name="Status" description="The deserialization error" type="Fw::DeserialStatus"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="InvalidCommand" id="0x15505" severity="WARNING_HI" description="Received an invalid opcode" format_string="Invalid opcode 0x%x received">
+      <args>
+        <arg name="Opcode" description="Invalid opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="TooManyCommands" id="0x15506" severity="WARNING_HI" description="Exceeded the number of commands that can be simultaneously executed" format_string="Too many outstanding commands. opcode=0x%x">
+      <args>
+        <arg name="Opcode" description="The opcode that overflowed the list" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="NoOpReceived" id="0x15507" severity="ACTIVITY_HI" description="The command dispatcher has successfully received a NO-OP command" format_string="Received a NO-OP command">
+      <args/>
+    </event>
+    <event component="jetson_cmdDisp" name="NoOpStringReceived" id="0x15508" severity="ACTIVITY_HI" description="The command dispatcher has successfully received a NO-OP command from GUI with a string" format_string="Received a NO-OP string=%s">
+      <args>
+        <arg name="message" description="The NO-OP string that is generated" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="TestCmd1Args" id="0x15509" severity="ACTIVITY_HI" description="This log event message returns the TEST_CMD_1 arguments." format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %u">
+      <args>
+        <arg name="arg1" description="Arg1" type="I32"/>
+        <arg name="arg2" description="Arg2" type="F32"/>
+        <arg name="arg3" description="Arg3" type="U8"/>
+      </args>
+    </event>
+    <event component="jetson_cmdDisp" name="OpCodeReregistered" id="0x1550a" severity="DIAGNOSTIC" description="Op code reregistered event" format_string="Opcode 0x%x is already registered to port %d">
+      <args>
+        <arg name="Opcode" description="The opcode reregistered" type="U32"/>
+        <arg name="port" description="The reregistration port" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_SequenceLoaded" id="0x15600" severity="ACTIVITY_LO" description="Sequence file was successfully loaded." format_string="Loaded sequence %s">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_SequenceCanceled" id="0x15601" severity="ACTIVITY_HI" description="A command sequence was successfully canceled." format_string="Sequence file %s canceled">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_FileReadError" id="0x15602" severity="WARNING_HI" description="The Sequence File Loader could not read the sequence file." format_string="Error reading sequence file %s">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_FileInvalid" id="0x15603" severity="WARNING_HI" description="The sequence file format was invalid." format_string="Sequence file %s invalid. Stage: %s Error: %d">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="stage" description="The read stage" type="Svc::CmdSequencer_FileReadStage"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_RecordInvalid" id="0x15604" severity="WARNING_HI" description="The format of a command record was invalid." format_string="Sequence file %s: Record %u invalid. Err: %d">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_FileSizeError" id="0x15605" severity="WARNING_HI" description="The sequence file was too large." format_string="Sequence file %s too large. Size: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="size" description="Invalid size" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_FileNotFound" id="0x15606" severity="WARNING_HI" description="The sequence file was not found" format_string="Sequence file %s not found.">
+      <args>
+        <arg name="fileName" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_FileCrcFailure" id="0x15607" severity="WARNING_HI" description="The sequence file validation failed" format_string="Sequence file %s had invalid CRC. Stored 0x%x, Computed 0x%x.">
+      <args>
+        <arg name="fileName" description="The sequence file" len="60" type="string"/>
+        <arg name="storedCRC" description="The CRC stored in the file" type="U32"/>
+        <arg name="computedCRC" description="The CRC computed over the file" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_CommandComplete" id="0x15608" severity="ACTIVITY_LO" description="The Command Sequencer issued a command and received a success status in return." format_string="Sequence file %s: Command %u (opcode %u) complete">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number of the command" type="U32"/>
+        <arg name="opCode" description="The command opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_SequenceComplete" id="0x15609" severity="ACTIVITY_HI" description="A command sequence successfully completed." format_string="Sequence file %s complete">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_CommandError" id="0x1560a" severity="WARNING_HI" description="The Command Sequencer issued a command and received an error status in return." format_string="Sequence file %s: Command %u (opcode %u) completed with error %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="opCode" description="The opcode" type="U32"/>
+        <arg name="errorStatus" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_InvalidMode" id="0x1560b" severity="WARNING_HI" description="The Command Sequencer received a command that was invalid for its current mode." format_string="Invalid mode">
+      <args/>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_RecordMismatch" id="0x1560c" severity="WARNING_HI" description="Number of records in header doesn't match number in file" format_string="Sequence file %s header records mismatch: %u in header, found %u extra bytes.">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="header_records" description="The number of records in the header" type="U32"/>
+        <arg name="extra_bytes" description="The number of bytes beyond last record" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_TimeBaseMismatch" id="0x1560d" severity="WARNING_HI" description="The running time base doesn't match the time base in the sequence files" format_string="Sequence file %s: Current time base doesn't match sequence time: base: %u seq: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="time_base" description="The current time" type="U16"/>
+        <arg name="seq_time_base" description="The sequence time base" type="U16"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_TimeContextMismatch" id="0x1560e" severity="WARNING_HI" description="The running time base doesn't match the time base in the sequence files" format_string="Sequence file %s: Current time context doesn't match sequence context: base: %u seq: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="currTimeBase" description="The current time base" type="U8"/>
+        <arg name="seqTimeBase" description="The sequence time base" type="U8"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_PortSequenceStarted" id="0x1560f" severity="ACTIVITY_HI" description="A local port request to run a sequence was started" format_string="Local request for sequence %s started.">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_UnexpectedCompletion" id="0x15610" severity="WARNING_HI" description="A command status came back when no sequence was running" format_string="Command complete status received while no sequences active. Opcode: %u">
+      <args>
+        <arg name="opcode" description="The reported opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_ModeSwitched" id="0x15611" severity="ACTIVITY_HI" description="Switched step mode" format_string="Sequencer switched to %s step mode">
+      <args>
+        <arg name="mode" description="The new mode" type="Svc::CmdSequencer_SeqMode"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_NoSequenceActive" id="0x15612" severity="WARNING_LO" description="A sequence related command came with no active sequence" format_string="No sequence active.">
+      <args/>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_SequenceValid" id="0x15613" severity="ACTIVITY_HI" description="A sequence passed validation" format_string="Sequence %s is valid.">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_SequenceTimeout" id="0x15614" severity="WARNING_HI" description="A sequence passed validation" format_string="Sequence %s timed out on command %u">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="command" description="The command that timed out" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_CmdStepped" id="0x15615" severity="ACTIVITY_HI" description="A command in a sequence was stepped through" format_string="Sequence %s command %u stepped">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="command" description="The command that was stepped" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_CmdStarted" id="0x15616" severity="ACTIVITY_HI" description="A manual sequence was started" format_string="Sequence %s started">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_JoinWaiting" id="0x15617" severity="ACTIVITY_HI" description="Wait for the current running sequence file complete" format_string="Start waiting for sequence file %s: Command %u (opcode %u) to complete">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="opCode" description="The opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_JoinWaitingNotComplete" id="0x15618" severity="WARNING_HI" description="Cannot run new sequence when current sequence file is still running." format_string="Still waiting for sequence file to complete">
+      <args/>
+    </event>
+    <event component="jetson_cmdSeq" name="CS_NoRecords" id="0x15619" severity="WARNING_LO" format_string="Sequence file %s has no records. Ignoring.">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_comQueue" name="QueueOverflow" id="0x15700" severity="WARNING_HI" description="Queue overflow event" format_string="The %s queue at index %u overflowed">
+      <args>
+        <arg name="queueType" description="The Queue data type" type="Svc::QueueType"/>
+        <arg name="index" description="index of overflowed queue" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="FileOpenError" id="0x15800" severity="WARNING_HI" description="An error occurred opening a file" format_string="Could not open file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="FileReadError" id="0x15801" severity="WARNING_HI" description="An error occurred reading a file" format_string="Could not read file %s with status %d">
+      <args>
+        <arg name="fileName" description="The name of the file" len="100" type="string"/>
+        <arg name="status" description="The file status of read" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="FileSent" id="0x15802" severity="ACTIVITY_HI" description="The File Downlink component successfully sent a file" format_string="Sent file %s to file %s">
+      <args>
+        <arg name="sourceFileName" description="The source file name" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="DownlinkCanceled" id="0x15803" severity="ACTIVITY_HI" description="The File Downlink component canceled downlink of a file" format_string="Canceled downlink of file %s to file %s">
+      <args>
+        <arg name="sourceFileName" description="The source file name" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="DownlinkTimeout" id="0x15804" severity="WARNING_HI" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Timeout occurred during downlink of file %s to file %s. Downlink has been canceled.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="DownlinkPartialWarning" id="0x15805" severity="WARNING_LO" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Offset %u plus length %u is greater than source size %u for partial downlink of file %s to file %s. ">
+      <args>
+        <arg name="startOffset" description="Starting file offset in bytes" type="U32"/>
+        <arg name="length" description="Number of bytes to downlink" type="U32"/>
+        <arg name="filesize" description="Size of source file" type="U32"/>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="DownlinkPartialFail" id="0x15806" severity="WARNING_HI" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Error occurred during partial downlink of file %s to file %s. Offset %u greater than or equal to source filesize %u.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+        <arg name="startOffset" description="Starting file offset in bytes" type="U32"/>
+        <arg name="filesize" description="Size of source file" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="SendDataFail" id="0x15807" severity="WARNING_HI" description="The File Downlink component generated an error when trying to send a data packet." format_string="Failed to send data packet from file %s at byte offset %u.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="byteOffset" description="Byte offset" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileDownlink" name="SendStarted" id="0x15808" severity="ACTIVITY_HI" description="The File Downlink component started a file download." format_string="Downlink of %u bytes started from %s to %s">
+      <args>
+        <arg name="fileSize" description="The source file size" type="U32"/>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination filename" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="DirectoryCreateError" id="0x15900" severity="WARNING_HI" description="An error occurred while attempting to create a directory" format_string="Could not create directory %s, returned status %u">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="DirectoryRemoveError" id="0x15901" severity="WARNING_HI" description="An error occurred while attempting to remove a directory" format_string="Could not remove directory %s, returned status %u">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="FileMoveError" id="0x15902" severity="WARNING_HI" description="An error occurred while attempting to move a file" format_string="Could not move file %s to file %s, returned status %u">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="FileRemoveError" id="0x15903" severity="WARNING_HI" description="An error occurred while attempting to remove a file" format_string="Could not remove file %s, returned status %u">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="ShellCommandFailed" id="0x15904" severity="WARNING_HI" description="The File System component executed a shell command that returned status non-zero" format_string="Shell command %s failed with status %u">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+        <arg name="status" description="The status code" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="AppendFileFailed" id="0x15905" severity="WARNING_HI" description="The File System component returned status non-zero when trying to append 2 files together" format_string="Appending %s onto %s failed with status %u">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="AppendFileSucceeded" id="0x15906" severity="ACTIVITY_HI" description="The File System component appended 2 files without error" format_string="Appended %s to the end of %s">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="ShellCommandSucceeded" id="0x15907" severity="ACTIVITY_HI" description="The File System component executed a shell command that returned status zero" format_string="Shell command %s succeeded">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="CreateDirectorySucceeded" id="0x15908" severity="ACTIVITY_HI" description="The File System component created a new directory without error" format_string="Created directory %s successfully">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="RemoveDirectorySucceeded" id="0x15909" severity="ACTIVITY_HI" description="The File System component deleted and existing directory without error" format_string="Removed directory %s successfully">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="MoveFileSucceeded" id="0x1590a" severity="ACTIVITY_HI" description="The File System component moved a file to a new location without error" format_string="Moved file %s to file %s successfully">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="RemoveFileSucceeded" id="0x1590b" severity="ACTIVITY_HI" description="The File System component deleted an existing file without error" format_string="Removed file %s successfully">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="AppendFileStarted" id="0x1590c" severity="ACTIVITY_HI" description="The File System component appended 2 files without error" format_string="Appending file %s to the end of %s...">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="ShellCommandStarted" id="0x1590d" severity="ACTIVITY_HI" description="The File System component began executing a shell command" format_string="Running shell command %s...">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="CreateDirectoryStarted" id="0x1590e" severity="ACTIVITY_HI" description="The File System component began creating a new directory" format_string="Creating directory %s...">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="RemoveDirectoryStarted" id="0x1590f" severity="ACTIVITY_HI" description="The File System component began deleting a directory" format_string="Removing directory %s...">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="MoveFileStarted" id="0x15910" severity="ACTIVITY_HI" description="The File System component began moving a file to a new location" format_string="Moving file %s to file %s...">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="RemoveFileStarted" id="0x15911" severity="ACTIVITY_HI" description="The File System component began deleting an existing file" format_string="Removing file %s...">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="FileSizeSucceeded" id="0x15912" severity="ACTIVITY_HI" description="File size response" format_string="The size of file %s is %lu B">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="size" description="The size of the file in bytes" type="U64"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="FileSizeError" id="0x15913" severity="WARNING_HI" description="Failed to get file size" format_string="Failed to get the size of file %s, returned status %u">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileManager" name="FileSizeStarted" id="0x15914" severity="ACTIVITY_HI" description="Checking file size" format_string="Checking size of file %s...">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="BadChecksum" id="0x15a00" severity="WARNING_HI" description="During receipt of a file, the computed checksum value did not match the stored value" format_string="Bad checksum value during receipt of file %s: computed 0x%x, read 0x%x">
+      <args>
+        <arg name="fileName" description="The file name" len="40" type="string"/>
+        <arg name="computed" description="The computed value" type="U32"/>
+        <arg name="read" description="The value read" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="FileOpenError" id="0x15a01" severity="WARNING_HI" description="An error occurred opening a file" format_string="Could not open file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="FileReceived" id="0x15a02" severity="ACTIVITY_HI" description="The File Uplink component successfully received a file" format_string="Received file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="FileWriteError" id="0x15a03" severity="WARNING_HI" description="An error occurred writing to a file" format_string="Could not write to file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="InvalidReceiveMode" id="0x15a04" severity="WARNING_HI" description="The File Uplink component received a packet with a type that was invalid for the current receive mode" format_string="Packet type %u received in mode %u">
+      <args>
+        <arg name="packetType" description="The type of the packet received" type="U32"/>
+        <arg name="mode" description="The receive mode" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="PacketOutOfBounds" id="0x15a05" severity="WARNING_HI" description="During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file" format_string="Packet %u out of bounds for file %s">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the packet" type="U32"/>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="PacketOutOfOrder" id="0x15a06" severity="WARNING_HI" description="The File Uplink component encountered an out-of-order packet during file receipt" format_string="Received packet %u after packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the out-of-order packet" type="U32"/>
+        <arg name="lastPacketIndex" description="The sequence index of the last packet received before the out-of-order packet" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="PacketDuplicate" id="0x15a07" severity="WARNING_HI" description="The File Uplink component encountered a duplicate packet during file receipt" format_string="Received a duplicate of packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the duplicate packet" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fileUplink" name="UplinkCanceled" id="0x15a08" severity="ACTIVITY_HI" description="The File Uplink component received a CANCEL packet" format_string="Received CANCEL packet">
+      <args/>
+    </event>
+    <event component="jetson_fileUplink" name="DecodeError" id="0x15a09" severity="WARNING_HI" description="Error decoding file packet" format_string="Unable to decode file packet. Status: %d">
+      <args>
+        <arg name="status" description="The sequence index of the out-of-order packet" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_eventLogger" name="SEVERITY_FILTER_STATE" id="0x15b00" severity="ACTIVITY_LO" description="Dump severity filter state" format_string="%s filter state. %d">
+      <args>
+        <arg name="severity" description="The severity level" type="Svc::ActiveLogger_FilterSeverity"/>
+        <arg name="enabled" type="bool"/>
+      </args>
+    </event>
+    <event component="jetson_eventLogger" name="ID_FILTER_ENABLED" id="0x15b01" severity="ACTIVITY_HI" description="Indicate ID is filtered" format_string="ID %u is filtered.">
+      <args>
+        <arg name="ID" description="The ID filtered" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_eventLogger" name="ID_FILTER_LIST_FULL" id="0x15b02" severity="WARNING_LO" description="Attempted to add ID to full ID filter ID" format_string="ID filter list is full. Cannot filter %u .">
+      <args>
+        <arg name="ID" description="The ID filtered" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_eventLogger" name="ID_FILTER_REMOVED" id="0x15b03" severity="ACTIVITY_HI" description="Removed an ID from the filter" format_string="ID filter ID %u removed.">
+      <args>
+        <arg name="ID" description="The ID removed" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_eventLogger" name="ID_FILTER_NOT_FOUND" id="0x15b04" severity="WARNING_LO" description="ID not in filter" format_string="ID filter ID %u not found.">
+      <args>
+        <arg name="ID" description="The ID removed" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmIdNotFound" id="0x15d00" severity="WARNING_LO" description="Parameter ID not found in database." format_string="Parameter ID 0x%x not found">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmIdUpdated" id="0x15d01" severity="ACTIVITY_HI" description="Parameter ID updated in database" format_string="Parameter ID 0x%x updated">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmDbFull" id="0x15d02" severity="FATAL" description="Parameter database is full" format_string="Parameter DB full when adding ID 0x%x ">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmIdAdded" id="0x15d03" severity="ACTIVITY_HI" description="Parameter ID added to database" format_string="Parameter ID 0x%x added">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmFileWriteError" id="0x15d04" severity="WARNING_HI" description="Failed to write parameter file" format_string="Parameter write failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" description="The write stage" type="Svc::PrmDb_PrmWriteError"/>
+        <arg name="record" description="The record that had the failure" type="I32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmFileSaveComplete" id="0x15d05" severity="ACTIVITY_HI" description="Save of parameter file completed" format_string="Parameter file save completed. Wrote %u records.">
+      <args>
+        <arg name="records" description="The number of records saved" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmFileReadError" id="0x15d06" severity="WARNING_HI" description="Failed to read parameter file" format_string="Parameter file read failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" description="The read stage" type="Svc::PrmDb_PrmReadError"/>
+        <arg name="record" description="The record that had the failure" type="I32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="jetson_prmDb" name="PrmFileLoadComplete" id="0x15d07" severity="ACTIVITY_HI" description="Load of parameter file completed" format_string="Parameter file load completed. Read %u records.">
+      <args>
+        <arg name="records" description="The number of records loaded" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_PING_WARN" id="0x16000" severity="WARNING_HI" description="Warn that a ping target is longer than the warning value" format_string="Ping entry %s late warning">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_PING_LATE" id="0x16001" severity="FATAL" description="Declare FATAL since task is no longer responding" format_string="Ping entry %s did not respond">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_PING_WRONG_KEY" id="0x16002" severity="FATAL" description="Declare FATAL since task is no longer responding" format_string="Ping entry %s responded with wrong key 0x%x">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+        <arg name="badKey" description="The incorrect key value" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_CHECK_ENABLE" id="0x16003" severity="ACTIVITY_HI" description="Report checking turned on or off" format_string="Health checking set to %s">
+      <args>
+        <arg name="enabled" description="If health checking is enabled" type="Fw::Enabled"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_CHECK_PING" id="0x16004" severity="ACTIVITY_HI" description="Report a particular entry on or off" format_string="Health checking set to %s for %s">
+      <args>
+        <arg name="enabled" description="If health pinging is enabled for a particular entry" type="Fw::Enabled"/>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_CHECK_LOOKUP_ERROR" id="0x16005" severity="WARNING_LO" description="Entry was not found" format_string="Couldn't find entry %s">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_PING_UPDATED" id="0x16006" severity="ACTIVITY_HI" description="Report changed ping" format_string="Health ping for %s changed to WARN %u FATAL %u">
+      <args>
+        <arg name="entry" description="The entry changed" len="40" type="string"/>
+        <arg name="warn" description="The new warning value" type="U32"/>
+        <arg name="fatal" description="The new FATAL value" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_health" name="HLTH_PING_INVALID_VALUES" id="0x16007" severity="WARNING_HI" description="Report changed ping" format_string="Health ping for %s invalid values: WARN %u FATAL %u">
+      <args>
+        <arg name="entry" description="The entry changed" len="40" type="string"/>
+        <arg name="warn" description="The new warning value" type="U32"/>
+        <arg name="fatal" description="The new FATAL value" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_0" id="0x17200" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_1" id="0x17201" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_2" id="0x17202" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_3" id="0x17203" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_4" id="0x17204" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_5" id="0x17205" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+        <arg name="arg5" description="Fifth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_ASSERT_6" id="0x17206" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+        <arg name="arg5" description="Fifth assert argument" type="U32"/>
+        <arg name="arg6" description="Sixth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_fatalAdapter" name="AF_UNEXPECTED_ASSERT" id="0x17207" severity="FATAL" description="An unexpected assert happened" format_string="Unexpected assert in file %s, line %u, args %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="numArgs" description="Number of unexpected arguments" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_bufferManager" name="NoBuffsAvailable" id="0x17400" severity="WARNING_HI" description="The BufferManager was unable to allocate a requested buffer" format_string="No available buffers of size %u">
+      <args>
+        <arg name="size" description="The requested size" type="U32"/>
+      </args>
+    </event>
+    <event component="jetson_bufferManager" name="NullEmptyBuffer" id="0x17401" severity="WARNING_HI" description="The buffer manager received a null pointer and zero-sized buffer as a return. Probably undetected failed buffer allocation" format_string="Received null pointer and zero size buffer">
+      <args/>
+    </event>
+    <event component="jetson_hubComQueue" name="QueueOverflow" id="0x19500" severity="WARNING_HI" description="Queue overflow event" format_string="The %s queue at index %u overflowed">
+      <args>
+        <arg name="queueType" description="The Queue data type" type="Svc::QueueType"/>
+        <arg name="index" description="index of overflowed queue" type="U32"/>
+      </args>
+    </event>
+    <event component="gpioWatchdogDriver" name="OpenChip" id="0x19650" severity="DIAGNOSTIC" format_string="Opened GPIO chip %s[%s] pin %u[%s]">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="chipLabel" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+      </args>
+    </event>
+    <event component="gpioWatchdogDriver" name="OpenChipError" id="0x19651" severity="WARNING_HI" format_string="Failed to open GPIO chip %s: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="gpioWatchdogDriver" name="OpenPinError" id="0x19652" severity="WARNING_HI" format_string="Failed to open GPIO chip %s pin %u [%s]: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="gpioWatchdogDriver" name="InterruptReadError" id="0x19653" severity="WARNING_HI" format_string="Interrupt data read expected %u byes and got %u">
+      <args>
+        <arg name="expected" type="U32"/>
+        <arg name="got" type="U32"/>
+      </args>
+    </event>
+    <event component="gpioWatchdogDriver" name="PollingError" id="0x19654" severity="WARNING_HI" format_string="Interrupt polling returned errno: %d">
+      <args>
+        <arg name="error_number" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_rateGroup1" name="RateGroupStarted" id="0x200" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="imx_rateGroup1" name="RateGroupCycleSlip" id="0x201" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_rateGroup2" name="RateGroupStarted" id="0x300" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="imx_rateGroup2" name="RateGroupCycleSlip" id="0x301" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_rateGroup3" name="RateGroupStarted" id="0x400" severity="DIAGNOSTIC" description="Informational event that rate group has started" format_string="Rate group started.">
+      <args/>
+    </event>
+    <event component="imx_rateGroup3" name="RateGroupCycleSlip" id="0x401" severity="WARNING_HI" description="Warning event that rate group has had a cycle slip" format_string="Rate group cycle slipped on cycle %u">
+      <args>
+        <arg name="cycle" description="The cycle where the cycle occurred" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="OpCodeRegistered" id="0x500" severity="DIAGNOSTIC" format_string="Opcode 0x%x registered to port %d slot %d">
+      <args>
+        <arg name="Opcode" description="The opcode to register" type="U32"/>
+        <arg name="port" description="The registration port" type="I32"/>
+        <arg name="slot" description="The dispatch slot it was placed in" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="OpCodeDispatched" id="0x501" severity="COMMAND" description="Op code dispatched event" format_string="Opcode 0x%x dispatched to port %d">
+      <args>
+        <arg name="Opcode" description="The opcode dispatched" type="U32"/>
+        <arg name="port" description="The port dispatched to" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="OpCodeCompleted" id="0x502" severity="COMMAND" description="Op code completed event" format_string="Opcode 0x%x completed">
+      <args>
+        <arg name="Opcode" description="The I32 command argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="OpCodeError" id="0x503" severity="COMMAND" description="Op code completed with error event" format_string="Opcode 0x%x completed with error %s">
+      <args>
+        <arg name="Opcode" description="The opcode with the error" type="U32"/>
+        <arg name="error" description="The error value" type="Fw::CmdResponse"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="MalformedCommand" id="0x504" severity="WARNING_HI" description="Received a malformed command packet" format_string="Received malformed command packet. Status: %s">
+      <args>
+        <arg name="Status" description="The deserialization error" type="Fw::DeserialStatus"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="InvalidCommand" id="0x505" severity="WARNING_HI" description="Received an invalid opcode" format_string="Invalid opcode 0x%x received">
+      <args>
+        <arg name="Opcode" description="Invalid opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="TooManyCommands" id="0x506" severity="WARNING_HI" description="Exceeded the number of commands that can be simultaneously executed" format_string="Too many outstanding commands. opcode=0x%x">
+      <args>
+        <arg name="Opcode" description="The opcode that overflowed the list" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="NoOpReceived" id="0x507" severity="ACTIVITY_HI" description="The command dispatcher has successfully received a NO-OP command" format_string="Received a NO-OP command">
+      <args/>
+    </event>
+    <event component="imx_cmdDisp" name="NoOpStringReceived" id="0x508" severity="ACTIVITY_HI" description="The command dispatcher has successfully received a NO-OP command from GUI with a string" format_string="Received a NO-OP string=%s">
+      <args>
+        <arg name="message" description="The NO-OP string that is generated" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="TestCmd1Args" id="0x509" severity="ACTIVITY_HI" description="This log event message returns the TEST_CMD_1 arguments." format_string="TEST_CMD_1 args: I32: %d, F32: %f, U8: %u">
+      <args>
+        <arg name="arg1" description="Arg1" type="I32"/>
+        <arg name="arg2" description="Arg2" type="F32"/>
+        <arg name="arg3" description="Arg3" type="U8"/>
+      </args>
+    </event>
+    <event component="imx_cmdDisp" name="OpCodeReregistered" id="0x50a" severity="DIAGNOSTIC" description="Op code reregistered event" format_string="Opcode 0x%x is already registered to port %d">
+      <args>
+        <arg name="Opcode" description="The opcode reregistered" type="U32"/>
+        <arg name="port" description="The reregistration port" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_SequenceLoaded" id="0x600" severity="ACTIVITY_LO" description="Sequence file was successfully loaded." format_string="Loaded sequence %s">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_SequenceCanceled" id="0x601" severity="ACTIVITY_HI" description="A command sequence was successfully canceled." format_string="Sequence file %s canceled">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_FileReadError" id="0x602" severity="WARNING_HI" description="The Sequence File Loader could not read the sequence file." format_string="Error reading sequence file %s">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_FileInvalid" id="0x603" severity="WARNING_HI" description="The sequence file format was invalid." format_string="Sequence file %s invalid. Stage: %s Error: %d">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="stage" description="The read stage" type="Svc::CmdSequencer_FileReadStage"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_RecordInvalid" id="0x604" severity="WARNING_HI" description="The format of a command record was invalid." format_string="Sequence file %s: Record %u invalid. Err: %d">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_FileSizeError" id="0x605" severity="WARNING_HI" description="The sequence file was too large." format_string="Sequence file %s too large. Size: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="size" description="Invalid size" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_FileNotFound" id="0x606" severity="WARNING_HI" description="The sequence file was not found" format_string="Sequence file %s not found.">
+      <args>
+        <arg name="fileName" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_FileCrcFailure" id="0x607" severity="WARNING_HI" description="The sequence file validation failed" format_string="Sequence file %s had invalid CRC. Stored 0x%x, Computed 0x%x.">
+      <args>
+        <arg name="fileName" description="The sequence file" len="60" type="string"/>
+        <arg name="storedCRC" description="The CRC stored in the file" type="U32"/>
+        <arg name="computedCRC" description="The CRC computed over the file" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_CommandComplete" id="0x608" severity="ACTIVITY_LO" description="The Command Sequencer issued a command and received a success status in return." format_string="Sequence file %s: Command %u (opcode %u) complete">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number of the command" type="U32"/>
+        <arg name="opCode" description="The command opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_SequenceComplete" id="0x609" severity="ACTIVITY_HI" description="A command sequence successfully completed." format_string="Sequence file %s complete">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_CommandError" id="0x60a" severity="WARNING_HI" description="The Command Sequencer issued a command and received an error status in return." format_string="Sequence file %s: Command %u (opcode %u) completed with error %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="opCode" description="The opcode" type="U32"/>
+        <arg name="errorStatus" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_InvalidMode" id="0x60b" severity="WARNING_HI" description="The Command Sequencer received a command that was invalid for its current mode." format_string="Invalid mode">
+      <args/>
+    </event>
+    <event component="imx_cmdSeq" name="CS_RecordMismatch" id="0x60c" severity="WARNING_HI" description="Number of records in header doesn't match number in file" format_string="Sequence file %s header records mismatch: %u in header, found %u extra bytes.">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="header_records" description="The number of records in the header" type="U32"/>
+        <arg name="extra_bytes" description="The number of bytes beyond last record" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_TimeBaseMismatch" id="0x60d" severity="WARNING_HI" description="The running time base doesn't match the time base in the sequence files" format_string="Sequence file %s: Current time base doesn't match sequence time: base: %u seq: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="time_base" description="The current time" type="U16"/>
+        <arg name="seq_time_base" description="The sequence time base" type="U16"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_TimeContextMismatch" id="0x60e" severity="WARNING_HI" description="The running time base doesn't match the time base in the sequence files" format_string="Sequence file %s: Current time context doesn't match sequence context: base: %u seq: %u">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+        <arg name="currTimeBase" description="The current time base" type="U8"/>
+        <arg name="seqTimeBase" description="The sequence time base" type="U8"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_PortSequenceStarted" id="0x60f" severity="ACTIVITY_HI" description="A local port request to run a sequence was started" format_string="Local request for sequence %s started.">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_UnexpectedCompletion" id="0x610" severity="WARNING_HI" description="A command status came back when no sequence was running" format_string="Command complete status received while no sequences active. Opcode: %u">
+      <args>
+        <arg name="opcode" description="The reported opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_ModeSwitched" id="0x611" severity="ACTIVITY_HI" description="Switched step mode" format_string="Sequencer switched to %s step mode">
+      <args>
+        <arg name="mode" description="The new mode" type="Svc::CmdSequencer_SeqMode"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_NoSequenceActive" id="0x612" severity="WARNING_LO" description="A sequence related command came with no active sequence" format_string="No sequence active.">
+      <args/>
+    </event>
+    <event component="imx_cmdSeq" name="CS_SequenceValid" id="0x613" severity="ACTIVITY_HI" description="A sequence passed validation" format_string="Sequence %s is valid.">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_SequenceTimeout" id="0x614" severity="WARNING_HI" description="A sequence passed validation" format_string="Sequence %s timed out on command %u">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="command" description="The command that timed out" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_CmdStepped" id="0x615" severity="ACTIVITY_HI" description="A command in a sequence was stepped through" format_string="Sequence %s command %u stepped">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="command" description="The command that was stepped" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_CmdStarted" id="0x616" severity="ACTIVITY_HI" description="A manual sequence was started" format_string="Sequence %s started">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_JoinWaiting" id="0x617" severity="ACTIVITY_HI" description="Wait for the current running sequence file complete" format_string="Start waiting for sequence file %s: Command %u (opcode %u) to complete">
+      <args>
+        <arg name="filename" description="The sequence file" len="60" type="string"/>
+        <arg name="recordNumber" description="The record number" type="U32"/>
+        <arg name="opCode" description="The opcode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_cmdSeq" name="CS_JoinWaitingNotComplete" id="0x618" severity="WARNING_HI" description="Cannot run new sequence when current sequence file is still running." format_string="Still waiting for sequence file to complete">
+      <args/>
+    </event>
+    <event component="imx_cmdSeq" name="CS_NoRecords" id="0x619" severity="WARNING_LO" format_string="Sequence file %s has no records. Ignoring.">
+      <args>
+        <arg name="fileName" description="The name of the sequence file" len="60" type="string"/>
+      </args>
+    </event>
+    <event component="imx_comQueue" name="QueueOverflow" id="0x700" severity="WARNING_HI" description="Queue overflow event" format_string="The %s queue at index %u overflowed">
+      <args>
+        <arg name="queueType" description="The Queue data type" type="Svc::QueueType"/>
+        <arg name="index" description="index of overflowed queue" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="FileOpenError" id="0x800" severity="WARNING_HI" description="An error occurred opening a file" format_string="Could not open file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="FileReadError" id="0x801" severity="WARNING_HI" description="An error occurred reading a file" format_string="Could not read file %s with status %d">
+      <args>
+        <arg name="fileName" description="The name of the file" len="100" type="string"/>
+        <arg name="status" description="The file status of read" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="FileSent" id="0x802" severity="ACTIVITY_HI" description="The File Downlink component successfully sent a file" format_string="Sent file %s to file %s">
+      <args>
+        <arg name="sourceFileName" description="The source file name" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="DownlinkCanceled" id="0x803" severity="ACTIVITY_HI" description="The File Downlink component canceled downlink of a file" format_string="Canceled downlink of file %s to file %s">
+      <args>
+        <arg name="sourceFileName" description="The source file name" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="DownlinkTimeout" id="0x804" severity="WARNING_HI" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Timeout occurred during downlink of file %s to file %s. Downlink has been canceled.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="DownlinkPartialWarning" id="0x805" severity="WARNING_LO" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Offset %u plus length %u is greater than source size %u for partial downlink of file %s to file %s. ">
+      <args>
+        <arg name="startOffset" description="Starting file offset in bytes" type="U32"/>
+        <arg name="length" description="Number of bytes to downlink" type="U32"/>
+        <arg name="filesize" description="Size of source file" type="U32"/>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="DownlinkPartialFail" id="0x806" severity="WARNING_HI" description="The File Downlink component has detected a timeout. Downlink has been canceled." format_string="Error occurred during partial downlink of file %s to file %s. Offset %u greater than or equal to source filesize %u.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination file name" len="100" type="string"/>
+        <arg name="startOffset" description="Starting file offset in bytes" type="U32"/>
+        <arg name="filesize" description="Size of source file" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="SendDataFail" id="0x807" severity="WARNING_HI" description="The File Downlink component generated an error when trying to send a data packet." format_string="Failed to send data packet from file %s at byte offset %u.">
+      <args>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="byteOffset" description="Byte offset" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileDownlink" name="SendStarted" id="0x808" severity="ACTIVITY_HI" description="The File Downlink component started a file download." format_string="Downlink of %u bytes started from %s to %s">
+      <args>
+        <arg name="fileSize" description="The source file size" type="U32"/>
+        <arg name="sourceFileName" description="The source filename" len="100" type="string"/>
+        <arg name="destFileName" description="The destination filename" len="100" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="DirectoryCreateError" id="0x900" severity="WARNING_HI" description="An error occurred while attempting to create a directory" format_string="Could not create directory %s, returned status %u">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="DirectoryRemoveError" id="0x901" severity="WARNING_HI" description="An error occurred while attempting to remove a directory" format_string="Could not remove directory %s, returned status %u">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="FileMoveError" id="0x902" severity="WARNING_HI" description="An error occurred while attempting to move a file" format_string="Could not move file %s to file %s, returned status %u">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="FileRemoveError" id="0x903" severity="WARNING_HI" description="An error occurred while attempting to remove a file" format_string="Could not remove file %s, returned status %u">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="ShellCommandFailed" id="0x904" severity="WARNING_HI" description="The File System component executed a shell command that returned status non-zero" format_string="Shell command %s failed with status %u">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+        <arg name="status" description="The status code" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="AppendFileFailed" id="0x905" severity="WARNING_HI" description="The File System component returned status non-zero when trying to append 2 files together" format_string="Appending %s onto %s failed with status %u">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="AppendFileSucceeded" id="0x906" severity="ACTIVITY_HI" description="The File System component appended 2 files without error" format_string="Appended %s to the end of %s">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="ShellCommandSucceeded" id="0x907" severity="ACTIVITY_HI" description="The File System component executed a shell command that returned status zero" format_string="Shell command %s succeeded">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="CreateDirectorySucceeded" id="0x908" severity="ACTIVITY_HI" description="The File System component created a new directory without error" format_string="Created directory %s successfully">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="RemoveDirectorySucceeded" id="0x909" severity="ACTIVITY_HI" description="The File System component deleted and existing directory without error" format_string="Removed directory %s successfully">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="MoveFileSucceeded" id="0x90a" severity="ACTIVITY_HI" description="The File System component moved a file to a new location without error" format_string="Moved file %s to file %s successfully">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="RemoveFileSucceeded" id="0x90b" severity="ACTIVITY_HI" description="The File System component deleted an existing file without error" format_string="Removed file %s successfully">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="AppendFileStarted" id="0x90c" severity="ACTIVITY_HI" description="The File System component appended 2 files without error" format_string="Appending file %s to the end of %s...">
+      <args>
+        <arg name="source" description="The name of the file being read from" len="256" type="string"/>
+        <arg name="target" description="The name of the file to append to" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="ShellCommandStarted" id="0x90d" severity="ACTIVITY_HI" description="The File System component began executing a shell command" format_string="Running shell command %s...">
+      <args>
+        <arg name="command" description="The command string" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="CreateDirectoryStarted" id="0x90e" severity="ACTIVITY_HI" description="The File System component began creating a new directory" format_string="Creating directory %s...">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="RemoveDirectoryStarted" id="0x90f" severity="ACTIVITY_HI" description="The File System component began deleting a directory" format_string="Removing directory %s...">
+      <args>
+        <arg name="dirName" description="The name of the directory" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="MoveFileStarted" id="0x910" severity="ACTIVITY_HI" description="The File System component began moving a file to a new location" format_string="Moving file %s to file %s...">
+      <args>
+        <arg name="sourceFileName" description="The name of the source file" len="256" type="string"/>
+        <arg name="destFileName" description="The name of the destination file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="RemoveFileStarted" id="0x911" severity="ACTIVITY_HI" description="The File System component began deleting an existing file" format_string="Removing file %s...">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="FileSizeSucceeded" id="0x912" severity="ACTIVITY_HI" description="File size response" format_string="The size of file %s is %lu B">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="size" description="The size of the file in bytes" type="U64"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="FileSizeError" id="0x913" severity="WARNING_HI" description="Failed to get file size" format_string="Failed to get the size of file %s, returned status %u">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+        <arg name="status" description="The error status" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileManager" name="FileSizeStarted" id="0x914" severity="ACTIVITY_HI" description="Checking file size" format_string="Checking size of file %s...">
+      <args>
+        <arg name="fileName" description="The name of the file" len="256" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="BadChecksum" id="0xa00" severity="WARNING_HI" description="During receipt of a file, the computed checksum value did not match the stored value" format_string="Bad checksum value during receipt of file %s: computed 0x%x, read 0x%x">
+      <args>
+        <arg name="fileName" description="The file name" len="40" type="string"/>
+        <arg name="computed" description="The computed value" type="U32"/>
+        <arg name="read" description="The value read" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="FileOpenError" id="0xa01" severity="WARNING_HI" description="An error occurred opening a file" format_string="Could not open file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="FileReceived" id="0xa02" severity="ACTIVITY_HI" description="The File Uplink component successfully received a file" format_string="Received file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="FileWriteError" id="0xa03" severity="WARNING_HI" description="An error occurred writing to a file" format_string="Could not write to file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="InvalidReceiveMode" id="0xa04" severity="WARNING_HI" description="The File Uplink component received a packet with a type that was invalid for the current receive mode" format_string="Packet type %u received in mode %u">
+      <args>
+        <arg name="packetType" description="The type of the packet received" type="U32"/>
+        <arg name="mode" description="The receive mode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="PacketOutOfBounds" id="0xa05" severity="WARNING_HI" description="During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file" format_string="Packet %u out of bounds for file %s">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the packet" type="U32"/>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="PacketOutOfOrder" id="0xa06" severity="WARNING_HI" description="The File Uplink component encountered an out-of-order packet during file receipt" format_string="Received packet %u after packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the out-of-order packet" type="U32"/>
+        <arg name="lastPacketIndex" description="The sequence index of the last packet received before the out-of-order packet" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="PacketDuplicate" id="0xa07" severity="WARNING_HI" description="The File Uplink component encountered a duplicate packet during file receipt" format_string="Received a duplicate of packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the duplicate packet" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fileUplink" name="UplinkCanceled" id="0xa08" severity="ACTIVITY_HI" description="The File Uplink component received a CANCEL packet" format_string="Received CANCEL packet">
+      <args/>
+    </event>
+    <event component="imx_fileUplink" name="DecodeError" id="0xa09" severity="WARNING_HI" description="Error decoding file packet" format_string="Unable to decode file packet. Status: %d">
+      <args>
+        <arg name="status" description="The sequence index of the out-of-order packet" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_eventLogger" name="SEVERITY_FILTER_STATE" id="0xb00" severity="ACTIVITY_LO" description="Dump severity filter state" format_string="%s filter state. %d">
+      <args>
+        <arg name="severity" description="The severity level" type="Svc::ActiveLogger_FilterSeverity"/>
+        <arg name="enabled" type="bool"/>
+      </args>
+    </event>
+    <event component="imx_eventLogger" name="ID_FILTER_ENABLED" id="0xb01" severity="ACTIVITY_HI" description="Indicate ID is filtered" format_string="ID %u is filtered.">
+      <args>
+        <arg name="ID" description="The ID filtered" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_eventLogger" name="ID_FILTER_LIST_FULL" id="0xb02" severity="WARNING_LO" description="Attempted to add ID to full ID filter ID" format_string="ID filter list is full. Cannot filter %u .">
+      <args>
+        <arg name="ID" description="The ID filtered" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_eventLogger" name="ID_FILTER_REMOVED" id="0xb03" severity="ACTIVITY_HI" description="Removed an ID from the filter" format_string="ID filter ID %u removed.">
+      <args>
+        <arg name="ID" description="The ID removed" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_eventLogger" name="ID_FILTER_NOT_FOUND" id="0xb04" severity="WARNING_LO" description="ID not in filter" format_string="ID filter ID %u not found.">
+      <args>
+        <arg name="ID" description="The ID removed" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmIdNotFound" id="0xd00" severity="WARNING_LO" description="Parameter ID not found in database." format_string="Parameter ID 0x%x not found">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmIdUpdated" id="0xd01" severity="ACTIVITY_HI" description="Parameter ID updated in database" format_string="Parameter ID 0x%x updated">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmDbFull" id="0xd02" severity="FATAL" description="Parameter database is full" format_string="Parameter DB full when adding ID 0x%x ">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmIdAdded" id="0xd03" severity="ACTIVITY_HI" description="Parameter ID added to database" format_string="Parameter ID 0x%x added">
+      <args>
+        <arg name="Id" description="The parameter ID" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmFileWriteError" id="0xd04" severity="WARNING_HI" description="Failed to write parameter file" format_string="Parameter write failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" description="The write stage" type="Svc::PrmDb_PrmWriteError"/>
+        <arg name="record" description="The record that had the failure" type="I32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmFileSaveComplete" id="0xd05" severity="ACTIVITY_HI" description="Save of parameter file completed" format_string="Parameter file save completed. Wrote %u records.">
+      <args>
+        <arg name="records" description="The number of records saved" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmFileReadError" id="0xd06" severity="WARNING_HI" description="Failed to read parameter file" format_string="Parameter file read failed in stage %s with record %d and error %d">
+      <args>
+        <arg name="stage" description="The read stage" type="Svc::PrmDb_PrmReadError"/>
+        <arg name="record" description="The record that had the failure" type="I32"/>
+        <arg name="error" description="The error code" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_prmDb" name="PrmFileLoadComplete" id="0xd07" severity="ACTIVITY_HI" description="Load of parameter file completed" format_string="Parameter file load completed. Read %u records.">
+      <args>
+        <arg name="records" description="The number of records loaded" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_PING_WARN" id="0x1000" severity="WARNING_HI" description="Warn that a ping target is longer than the warning value" format_string="Ping entry %s late warning">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_PING_LATE" id="0x1001" severity="FATAL" description="Declare FATAL since task is no longer responding" format_string="Ping entry %s did not respond">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_PING_WRONG_KEY" id="0x1002" severity="FATAL" description="Declare FATAL since task is no longer responding" format_string="Ping entry %s responded with wrong key 0x%x">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+        <arg name="badKey" description="The incorrect key value" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_CHECK_ENABLE" id="0x1003" severity="ACTIVITY_HI" description="Report checking turned on or off" format_string="Health checking set to %s">
+      <args>
+        <arg name="enabled" description="If health checking is enabled" type="Fw::Enabled"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_CHECK_PING" id="0x1004" severity="ACTIVITY_HI" description="Report a particular entry on or off" format_string="Health checking set to %s for %s">
+      <args>
+        <arg name="enabled" description="If health pinging is enabled for a particular entry" type="Fw::Enabled"/>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_CHECK_LOOKUP_ERROR" id="0x1005" severity="WARNING_LO" description="Entry was not found" format_string="Couldn't find entry %s">
+      <args>
+        <arg name="entry" description="The entry passing the warning level" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_PING_UPDATED" id="0x1006" severity="ACTIVITY_HI" description="Report changed ping" format_string="Health ping for %s changed to WARN %u FATAL %u">
+      <args>
+        <arg name="entry" description="The entry changed" len="40" type="string"/>
+        <arg name="warn" description="The new warning value" type="U32"/>
+        <arg name="fatal" description="The new FATAL value" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_health" name="HLTH_PING_INVALID_VALUES" id="0x1007" severity="WARNING_HI" description="Report changed ping" format_string="Health ping for %s invalid values: WARN %u FATAL %u">
+      <args>
+        <arg name="entry" description="The entry changed" len="40" type="string"/>
+        <arg name="warn" description="The new warning value" type="U32"/>
+        <arg name="fatal" description="The new FATAL value" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_0" id="0x2200" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_1" id="0x2201" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_2" id="0x2202" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_3" id="0x2203" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_4" id="0x2204" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_5" id="0x2205" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+        <arg name="arg5" description="Fifth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_ASSERT_6" id="0x2206" severity="FATAL" description="An assert happened" format_string="Assert in file %s, line %u: %u %u %u %u %u %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="arg1" description="First assert argument" type="U32"/>
+        <arg name="arg2" description="Second assert argument" type="U32"/>
+        <arg name="arg3" description="Third assert argument" type="U32"/>
+        <arg name="arg4" description="Fourth assert argument" type="U32"/>
+        <arg name="arg5" description="Fifth assert argument" type="U32"/>
+        <arg name="arg6" description="Sixth assert argument" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_fatalAdapter" name="AF_UNEXPECTED_ASSERT" id="0x2207" severity="FATAL" description="An unexpected assert happened" format_string="Unexpected assert in file %s, line %u, args %u">
+      <args>
+        <arg name="file" description="The source file of the assert" len="200" type="string"/>
+        <arg name="line" description="Line number of the assert" type="U32"/>
+        <arg name="numArgs" description="Number of unexpected arguments" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_bufferManager" name="NoBuffsAvailable" id="0x2400" severity="WARNING_HI" description="The BufferManager was unable to allocate a requested buffer" format_string="No available buffers of size %u">
+      <args>
+        <arg name="size" description="The requested size" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_bufferManager" name="NullEmptyBuffer" id="0x2401" severity="WARNING_HI" description="The buffer manager received a null pointer and zero-sized buffer as a return. Probably undetected failed buffer allocation" format_string="Received null pointer and zero size buffer">
+      <args/>
+    </event>
+    <event component="imx_hubComQueue" name="QueueOverflow" id="0x4500" severity="WARNING_HI" description="Queue overflow event" format_string="The %s queue at index %u overflowed">
+      <args>
+        <arg name="queueType" description="The Queue data type" type="Svc::QueueType"/>
+        <arg name="index" description="index of overflowed queue" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="BadChecksum" id="0x4900" severity="WARNING_HI" description="During receipt of a file, the computed checksum value did not match the stored value" format_string="Bad checksum value during receipt of file %s: computed 0x%x, read 0x%x">
+      <args>
+        <arg name="fileName" description="The file name" len="40" type="string"/>
+        <arg name="computed" description="The computed value" type="U32"/>
+        <arg name="read" description="The value read" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="FileOpenError" id="0x4901" severity="WARNING_HI" description="An error occurred opening a file" format_string="Could not open file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="FileReceived" id="0x4902" severity="ACTIVITY_HI" description="The File Uplink component successfully received a file" format_string="Received file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="FileWriteError" id="0x4903" severity="WARNING_HI" description="An error occurred writing to a file" format_string="Could not write to file %s">
+      <args>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="InvalidReceiveMode" id="0x4904" severity="WARNING_HI" description="The File Uplink component received a packet with a type that was invalid for the current receive mode" format_string="Packet type %u received in mode %u">
+      <args>
+        <arg name="packetType" description="The type of the packet received" type="U32"/>
+        <arg name="mode" description="The receive mode" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="PacketOutOfBounds" id="0x4905" severity="WARNING_HI" description="During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file" format_string="Packet %u out of bounds for file %s">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the packet" type="U32"/>
+        <arg name="fileName" description="The name of the file" len="40" type="string"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="PacketOutOfOrder" id="0x4906" severity="WARNING_HI" description="The File Uplink component encountered an out-of-order packet during file receipt" format_string="Received packet %u after packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the out-of-order packet" type="U32"/>
+        <arg name="lastPacketIndex" description="The sequence index of the last packet received before the out-of-order packet" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="PacketDuplicate" id="0x4907" severity="WARNING_HI" description="The File Uplink component encountered a duplicate packet during file receipt" format_string="Received a duplicate of packet %u">
+      <args>
+        <arg name="packetIndex" description="The sequence index of the duplicate packet" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_hubFileUplink" name="UplinkCanceled" id="0x4908" severity="ACTIVITY_HI" description="The File Uplink component received a CANCEL packet" format_string="Received CANCEL packet">
+      <args/>
+    </event>
+    <event component="imx_hubFileUplink" name="DecodeError" id="0x4909" severity="WARNING_HI" description="Error decoding file packet" format_string="Unable to decode file packet. Status: %d">
+      <args>
+        <arg name="status" description="The sequence index of the out-of-order packet" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_watchdogManager" name="WatchdogState" id="0x5000" severity="ACTIVITY_HI" description="event that updates everytime watchdog is pet" format_string="Watchdog is %s">
+      <args>
+        <arg name="state" type="Fw::On"/>
+      </args>
+    </event>
+    <event component="imx_inaManager" name="I2cReadFailed" id="0x5200" severity="WARNING_HI" description="Event for failed INA260 read" format_string="INA260 I2C read failed for register 0x%u with status %d">
+      <args>
+        <arg name="register_address" type="U8"/>
+        <arg name="status" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_inaManager" name="SensorReadComplete" id="0x5201" severity="ACTIVITY_HI" format_string="INA260 read complete: current %g mA, voltage %g mV, power %g mW">
+      <args>
+        <arg name="current_mA" type="F32"/>
+        <arg name="voltage_mV" type="F32"/>
+        <arg name="power_mW" type="F32"/>
+      </args>
+    </event>
+    <event component="imx_perifBoardManager" name="gpioOn" id="0x5400" severity="ACTIVITY_HI" description="event to report the state of the gpio" format_string="Peripheral Board is %s">
+      <args>
+        <arg name="state" type="Fw::On"/>
+      </args>
+    </event>
+    <event component="imx_jetsonManager" name="POWER_MODE_REQUESTED" id="0x5500" severity="ACTIVITY_HI" description="Event indicating a power mode change was requested" format_string="JetsonManager requested Jetson power mode %s">
+      <args>
+        <arg name="mode" description="The requested power mode" type="scalesSvc::PowerModeID"/>
+      </args>
+    </event>
+    <event component="imx_jetsonManager" name="POWER_MODE_RECEIVED" id="0x5501" severity="ACTIVITY_LO" description="Event indicating the current power mode was received" format_string="JetsonManager received Jetson power mode %s">
+      <args>
+        <arg name="mode" description="The current power mode reported by Jetson" type="scalesSvc::PowerModeID"/>
+      </args>
+    </event>
+    <event component="imx_jetsonManager" name="JETSON_POWER_STATE_REQUESTED" id="0x5502" severity="ACTIVITY_HI" description="Event indicating a Jetson power state change was requested" format_string="JetsonManager requested Jetson power state change to %s">
+      <args>
+        <arg name="jetsonState" description="The requested Jetson power state (on/off)" type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </event>
+    <event component="imx_jetsonManager" name="JETSON_POWER_STATE_RECEIVED" id="0x5503" severity="ACTIVITY_LO" description="Event indicating the current Jetson power state was received" format_string="JetsonManager received Jetson power state %s">
+      <args>
+        <arg name="jetsonState" description="The current Jetson power state reported by Jetson" type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </event>
+    <event component="imx_jetsonManager" name="JETSON_POWER_STATE_TIMEOUT" id="0x5504" severity="WARNING_HI" description="Event indicating a Jetson power commmand timed out" format_string="JetsonManager timed out waiting for Jetson power state response to command %s">
+      <args>
+        <arg name="jetsonState" description="The Jetson power state that timed out" type="scalesSvc::JetsonPowerStateID"/>
+      </args>
+    </event>
+    <event component="imx_perifGpioDriver" name="OpenChip" id="0x6020" severity="DIAGNOSTIC" format_string="Opened GPIO chip %s[%s] pin %u[%s]">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="chipLabel" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+      </args>
+    </event>
+    <event component="imx_perifGpioDriver" name="OpenChipError" id="0x6021" severity="WARNING_HI" format_string="Failed to open GPIO chip %s: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="imx_perifGpioDriver" name="OpenPinError" id="0x6022" severity="WARNING_HI" format_string="Failed to open GPIO chip %s pin %u [%s]: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="imx_perifGpioDriver" name="InterruptReadError" id="0x6023" severity="WARNING_HI" format_string="Interrupt data read expected %u byes and got %u">
+      <args>
+        <arg name="expected" type="U32"/>
+        <arg name="got" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_perifGpioDriver" name="PollingError" id="0x6024" severity="WARNING_HI" format_string="Interrupt polling returned errno: %d">
+      <args>
+        <arg name="error_number" type="I32"/>
+      </args>
+    </event>
+    <event component="imx_jetsonGpioDriver" name="OpenChip" id="0x6030" severity="DIAGNOSTIC" format_string="Opened GPIO chip %s[%s] pin %u[%s]">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="chipLabel" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+      </args>
+    </event>
+    <event component="imx_jetsonGpioDriver" name="OpenChipError" id="0x6031" severity="WARNING_HI" format_string="Failed to open GPIO chip %s: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="imx_jetsonGpioDriver" name="OpenPinError" id="0x6032" severity="WARNING_HI" format_string="Failed to open GPIO chip %s pin %u [%s]: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="imx_jetsonGpioDriver" name="InterruptReadError" id="0x6033" severity="WARNING_HI" format_string="Interrupt data read expected %u byes and got %u">
+      <args>
+        <arg name="expected" type="U32"/>
+        <arg name="got" type="U32"/>
+      </args>
+    </event>
+    <event component="imx_jetsonGpioDriver" name="PollingError" id="0x6034" severity="WARNING_HI" format_string="Interrupt polling returned errno: %d">
+      <args>
+        <arg name="error_number" type="I32"/>
+      </args>
+    </event>
+    <event component="gpioWatchDogDriver" name="OpenChip" id="0x6040" severity="DIAGNOSTIC" format_string="Opened GPIO chip %s[%s] pin %u[%s]">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="chipLabel" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+      </args>
+    </event>
+    <event component="gpioWatchDogDriver" name="OpenChipError" id="0x6041" severity="WARNING_HI" format_string="Failed to open GPIO chip %s: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="gpioWatchDogDriver" name="OpenPinError" id="0x6042" severity="WARNING_HI" format_string="Failed to open GPIO chip %s pin %u [%s]: %s">
+      <args>
+        <arg name="chip" len="80" type="string"/>
+        <arg name="pin" type="U32"/>
+        <arg name="pinMessage" len="80" type="string"/>
+        <arg name="status" type="Os::FileStatus"/>
+      </args>
+    </event>
+    <event component="gpioWatchDogDriver" name="InterruptReadError" id="0x6043" severity="WARNING_HI" format_string="Interrupt data read expected %u byes and got %u">
+      <args>
+        <arg name="expected" type="U32"/>
+        <arg name="got" type="U32"/>
+      </args>
+    </event>
+    <event component="gpioWatchDogDriver" name="PollingError" id="0x6044" severity="WARNING_HI" format_string="Interrupt polling returned errno: %d">
+      <args>
+        <arg name="error_number" type="I32"/>
+      </args>
+    </event>
+  </events>
+  <channels>
+    <channel component="jetson_watchdogManager" name="WatchdogPet" id="0x11600" description="telemetry channel to report the state of the watchdog" type="scalesSvc::WatchdogStates"/>
+    <channel component="jetson_pwrModeManager" name="CurrentPowerMode" id="0x11700" description="Current power mode of Jetson" type="scalesSvc::PowerModeID"/>
+    <channel component="jetson_pwrModeManager" name="CurrentJetsonPowerState" id="0x11701" description="Current power state of the Jetson" type="scalesSvc::JetsonPowerStateID"/>
+    <channel component="jetson_thermalManager" name="jetson_cpu_temp_read" id="0x11800" description="telemetry channel for Jetson CPU temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_gpu_temp_read" id="0x11801" description="telemetry channel for Jetson GPU temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_cv0_temp_read" id="0x11802" description="telemetry channel for Jetson CV0 temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_cv1_temp_read" id="0x11803" description="telemetry channel for Jetson CV1 temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_cv2_temp_read" id="0x11804" description="telemetry channel for Jetson CV2 temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_soc0_temp_read" id="0x11805" description="telemetry channel for Jetson SOC0 temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_soc1_temp_read" id="0x11806" description="telemetry channel for Jetson SOC1 temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_soc2_temp_read" id="0x11807" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="jetson_tj_temp_read" id="0x11808" type="scalesSvc::ThermalReading"/>
+    <channel component="jetson_thermalManager" name="JETSON_IDLE_LOW" id="0x11816" description="Telmetry for IDLE state low threshold" type="F32"/>
+    <channel component="jetson_thermalManager" name="JETSON_IDLE_HIGH" id="0x11817" description="Telmetry for IDLE state high threshold" type="F32"/>
+    <channel component="jetson_thermalManager" name="JETSON_WARN_LOW" id="0x11818" description="Telmetry for WARNING state low threshold" type="F32"/>
+    <channel component="jetson_thermalManager" name="JETSON_WARN_HIGH" id="0x11819" description="Telmetry for WARNING state high threshold" type="F32"/>
+    <channel component="jetson_thermalManager" name="JETSON_FAULT_LOW" id="0x1181a" description="Telmetry for FAULT state low threshold" type="F32"/>
+    <channel component="jetson_thermalManager" name="JETSON_FAULT_HIGH" id="0x1181b" description="Telmetry for FAULT state high threshold" type="F32"/>
+    <channel component="jetson_blockDrv" name="BD_Cycles" id="0x15100" description="Driver cycle count" type="U32"/>
+    <channel component="jetson_rateGroup1" name="RgMaxTime" id="0x15200" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="jetson_rateGroup1" name="RgCycleSlips" id="0x15201" description="Cycle slips for rate group" type="U32"/>
+    <channel component="jetson_rateGroup2" name="RgMaxTime" id="0x15300" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="jetson_rateGroup2" name="RgCycleSlips" id="0x15301" description="Cycle slips for rate group" type="U32"/>
+    <channel component="jetson_rateGroup3" name="RgMaxTime" id="0x15400" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="jetson_rateGroup3" name="RgCycleSlips" id="0x15401" description="Cycle slips for rate group" type="U32"/>
+    <channel component="jetson_cmdDisp" name="CommandsDispatched" id="0x15500" description="Number of commands dispatched" type="U32"/>
+    <channel component="jetson_cmdDisp" name="CommandErrors" id="0x15501" description="Number of command errors" type="U32"/>
+    <channel component="jetson_cmdSeq" name="CS_LoadCommands" id="0x15600" description="The number of Load commands executed" type="U32"/>
+    <channel component="jetson_cmdSeq" name="CS_CancelCommands" id="0x15601" description="The number of Cancel commands executed" type="U32"/>
+    <channel component="jetson_cmdSeq" name="CS_Errors" id="0x15602" description="The number of errors that have occurred" type="U32"/>
+    <channel component="jetson_cmdSeq" name="CS_CommandsExecuted" id="0x15603" description="The number of commands executed across all sequences." type="U32"/>
+    <channel component="jetson_cmdSeq" name="CS_SequencesCompleted" id="0x15604" description="The number of sequences completed." type="U32"/>
+    <channel component="jetson_comQueue" name="comQueueDepth" id="0x15700" description="Depth of queues of Fw::ComBuffer type" type="Svc::ComQueueDepth"/>
+    <channel component="jetson_comQueue" name="buffQueueDepth" id="0x15701" description="Depth of queues of Fw::Buffer type" type="Svc::BuffQueueDepth"/>
+    <channel component="jetson_fileDownlink" name="FilesSent" id="0x15800" description="The total number of files sent" type="U32"/>
+    <channel component="jetson_fileDownlink" name="PacketsSent" id="0x15801" description="The total number of packets sent" type="U32"/>
+    <channel component="jetson_fileDownlink" name="Warnings" id="0x15802" description="The total number of warnings" type="U32"/>
+    <channel component="jetson_fileManager" name="CommandsExecuted" id="0x15900" description="The total number of commands successfully executed" type="U32"/>
+    <channel component="jetson_fileManager" name="Errors" id="0x15901" description="The total number of errors" type="U32"/>
+    <channel component="jetson_fileUplink" name="FilesReceived" id="0x15a00" description="The total number of complete files received" type="U32"/>
+    <channel component="jetson_fileUplink" name="PacketsReceived" id="0x15a01" description="The total number of packets received" type="U32"/>
+    <channel component="jetson_fileUplink" name="Warnings" id="0x15a02" description="The total number of warnings issued" type="U32"/>
+    <channel component="jetson_health" name="PingLateWarnings" id="0x16000" description="Number of overrun warnings" type="U32"/>
+    <channel component="jetson_bufferManager" name="TotalBuffs" id="0x17400" description="The total buffers allocated" type="U32"/>
+    <channel component="jetson_bufferManager" name="CurrBuffs" id="0x17401" description="The current number of allocated buffers" type="U32"/>
+    <channel component="jetson_bufferManager" name="HiBuffs" id="0x17402" description="The high water mark of allocated buffers" type="U32"/>
+    <channel component="jetson_bufferManager" name="NoBuffs" id="0x17403" description="The number of requests that couldn't return a buffer" high_red="1" type="U32"/>
+    <channel component="jetson_bufferManager" name="EmptyBuffs" id="0x17404" description="The number of empty buffers returned" high_red="1" type="U32"/>
+    <channel component="jetson_systemResources" name="MEMORY_TOTAL" id="0x17a00" format_string="%lu KB" description="Total system memory in KB" type="U64"/>
+    <channel component="jetson_systemResources" name="MEMORY_USED" id="0x17a01" format_string="%lu KB" description="System memory used in KB" type="U64"/>
+    <channel component="jetson_systemResources" name="NON_VOLATILE_TOTAL" id="0x17a02" format_string="%lu KB" description="System non-volatile available in KB" type="U64"/>
+    <channel component="jetson_systemResources" name="NON_VOLATILE_FREE" id="0x17a03" format_string="%lu KB" description="System non-volatile available in KB" type="U64"/>
+    <channel component="jetson_systemResources" name="CPU" id="0x17a04" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_00" id="0x17a05" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_01" id="0x17a06" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_02" id="0x17a07" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_03" id="0x17a08" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_04" id="0x17a09" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_05" id="0x17a0a" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_06" id="0x17a0b" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_07" id="0x17a0c" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_08" id="0x17a0d" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_09" id="0x17a0e" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_10" id="0x17a0f" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_11" id="0x17a10" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_12" id="0x17a11" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_13" id="0x17a12" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_14" id="0x17a13" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_systemResources" name="CPU_15" id="0x17a14" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="jetson_hubComQueue" name="comQueueDepth" id="0x19500" description="Depth of queues of Fw::ComBuffer type" type="Svc::ComQueueDepth"/>
+    <channel component="jetson_hubComQueue" name="buffQueueDepth" id="0x19501" description="Depth of queues of Fw::Buffer type" type="Svc::BuffQueueDepth"/>
+    <channel component="imx_blockDrv" name="BD_Cycles" id="0x100" description="Driver cycle count" type="U32"/>
+    <channel component="imx_rateGroup1" name="RgMaxTime" id="0x200" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="imx_rateGroup1" name="RgCycleSlips" id="0x201" description="Cycle slips for rate group" type="U32"/>
+    <channel component="imx_rateGroup2" name="RgMaxTime" id="0x300" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="imx_rateGroup2" name="RgCycleSlips" id="0x301" description="Cycle slips for rate group" type="U32"/>
+    <channel component="imx_rateGroup3" name="RgMaxTime" id="0x400" format_string="%u us" description="Max execution time rate group" type="U32"/>
+    <channel component="imx_rateGroup3" name="RgCycleSlips" id="0x401" description="Cycle slips for rate group" type="U32"/>
+    <channel component="imx_cmdDisp" name="CommandsDispatched" id="0x500" description="Number of commands dispatched" type="U32"/>
+    <channel component="imx_cmdDisp" name="CommandErrors" id="0x501" description="Number of command errors" type="U32"/>
+    <channel component="imx_cmdSeq" name="CS_LoadCommands" id="0x600" description="The number of Load commands executed" type="U32"/>
+    <channel component="imx_cmdSeq" name="CS_CancelCommands" id="0x601" description="The number of Cancel commands executed" type="U32"/>
+    <channel component="imx_cmdSeq" name="CS_Errors" id="0x602" description="The number of errors that have occurred" type="U32"/>
+    <channel component="imx_cmdSeq" name="CS_CommandsExecuted" id="0x603" description="The number of commands executed across all sequences." type="U32"/>
+    <channel component="imx_cmdSeq" name="CS_SequencesCompleted" id="0x604" description="The number of sequences completed." type="U32"/>
+    <channel component="imx_comQueue" name="comQueueDepth" id="0x700" description="Depth of queues of Fw::ComBuffer type" type="Svc::ComQueueDepth"/>
+    <channel component="imx_comQueue" name="buffQueueDepth" id="0x701" description="Depth of queues of Fw::Buffer type" type="Svc::BuffQueueDepth"/>
+    <channel component="imx_fileDownlink" name="FilesSent" id="0x800" description="The total number of files sent" type="U32"/>
+    <channel component="imx_fileDownlink" name="PacketsSent" id="0x801" description="The total number of packets sent" type="U32"/>
+    <channel component="imx_fileDownlink" name="Warnings" id="0x802" description="The total number of warnings" type="U32"/>
+    <channel component="imx_fileManager" name="CommandsExecuted" id="0x900" description="The total number of commands successfully executed" type="U32"/>
+    <channel component="imx_fileManager" name="Errors" id="0x901" description="The total number of errors" type="U32"/>
+    <channel component="imx_fileUplink" name="FilesReceived" id="0xa00" description="The total number of complete files received" type="U32"/>
+    <channel component="imx_fileUplink" name="PacketsReceived" id="0xa01" description="The total number of packets received" type="U32"/>
+    <channel component="imx_fileUplink" name="Warnings" id="0xa02" description="The total number of warnings issued" type="U32"/>
+    <channel component="imx_health" name="PingLateWarnings" id="0x1000" description="Number of overrun warnings" type="U32"/>
+    <channel component="imx_bufferManager" name="TotalBuffs" id="0x2400" description="The total buffers allocated" type="U32"/>
+    <channel component="imx_bufferManager" name="CurrBuffs" id="0x2401" description="The current number of allocated buffers" type="U32"/>
+    <channel component="imx_bufferManager" name="HiBuffs" id="0x2402" description="The high water mark of allocated buffers" type="U32"/>
+    <channel component="imx_bufferManager" name="NoBuffs" id="0x2403" description="The number of requests that couldn't return a buffer" high_red="1" type="U32"/>
+    <channel component="imx_bufferManager" name="EmptyBuffs" id="0x2404" description="The number of empty buffers returned" high_red="1" type="U32"/>
+    <channel component="imx_systemResources" name="MEMORY_TOTAL" id="0x2a00" format_string="%lu KB" description="Total system memory in KB" type="U64"/>
+    <channel component="imx_systemResources" name="MEMORY_USED" id="0x2a01" format_string="%lu KB" description="System memory used in KB" type="U64"/>
+    <channel component="imx_systemResources" name="NON_VOLATILE_TOTAL" id="0x2a02" format_string="%lu KB" description="System non-volatile available in KB" type="U64"/>
+    <channel component="imx_systemResources" name="NON_VOLATILE_FREE" id="0x2a03" format_string="%lu KB" description="System non-volatile available in KB" type="U64"/>
+    <channel component="imx_systemResources" name="CPU" id="0x2a04" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_00" id="0x2a05" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_01" id="0x2a06" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_02" id="0x2a07" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_03" id="0x2a08" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_04" id="0x2a09" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_05" id="0x2a0a" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_06" id="0x2a0b" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_07" id="0x2a0c" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_08" id="0x2a0d" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_09" id="0x2a0e" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_10" id="0x2a0f" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_11" id="0x2a10" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_12" id="0x2a11" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_13" id="0x2a12" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_14" id="0x2a13" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_systemResources" name="CPU_15" id="0x2a14" format_string="%.2f percent" description="System's CPU Percentage" type="F32"/>
+    <channel component="imx_hubComQueue" name="comQueueDepth" id="0x4500" description="Depth of queues of Fw::ComBuffer type" type="Svc::ComQueueDepth"/>
+    <channel component="imx_hubComQueue" name="buffQueueDepth" id="0x4501" description="Depth of queues of Fw::Buffer type" type="Svc::BuffQueueDepth"/>
+    <channel component="imx_hubFileUplink" name="FilesReceived" id="0x4900" description="The total number of complete files received" type="U32"/>
+    <channel component="imx_hubFileUplink" name="PacketsReceived" id="0x4901" description="The total number of packets received" type="U32"/>
+    <channel component="imx_hubFileUplink" name="Warnings" id="0x4902" description="The total number of warnings issued" type="U32"/>
+    <channel component="imx_watchdogManager" name="WatchdogPet" id="0x5000" description="telemetry channel to report the state of the watchdog" type="scalesSvc::WatchdogStates"/>
+    <channel component="imx_thermalManager" name="imx_thermal_state" id="0x5100" description="telemetry channel for imx thermal state" type="scalesSvc::ThermalStates"/>
+    <channel component="imx_thermalManager" name="imx_cpu_temp_read" id="0x5101" description="telemetry channel for IMXCPUTEMP read" type="scalesSvc::ThermalReading"/>
+    <channel component="imx_inaManager" name="INA260_Jetson" id="0x5200" description="Telemetry channel for INA260 Jetson subsystem using struct PowerReading" type="scalesSvc::PowerReading"/>
+    <channel component="imx_inaManager" name="INA260_OBC" id="0x5201" description="Telemetry channel for INA260 OBC subsystem using struct PowerReading" type="scalesSvc::PowerReading"/>
+    <channel component="imx_inaManager" name="INA260_Peripheral" id="0x5202" description="Telemetry channel for INA260 Peripheral subsystem using struct PowerReading" type="scalesSvc::PowerReading"/>
+    <channel component="imx_mcpManager" name="IMX_TEMP" id="0x5300" description="Telemetry to log imx_temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="imx_mcpManager" name="PERIPHERAL_TEMP" id="0x5301" description="Telemetry to log periferal temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="imx_mcpManager" name="JETSON_TEMP" id="0x5302" description="Telemetry to log Jetson temp data" type="scalesSvc::ThermalReading"/>
+    <channel component="imx_mcpManager" name="MCP_IDLE_LOW" id="0x5310" description="Telmetry for IDLE state low threshold" type="F32"/>
+    <channel component="imx_mcpManager" name="MCP_IDLE_HIGH" id="0x5311" description="Telmetry for IDLE state high threshold" type="F32"/>
+    <channel component="imx_mcpManager" name="MCP_WARN_LOW" id="0x5312" description="Telmetry for WARNING state low threshold" type="F32"/>
+    <channel component="imx_mcpManager" name="MCP_WARN_HIGH" id="0x5313" description="Telmetry for WARNING state high threshold" type="F32"/>
+    <channel component="imx_mcpManager" name="MCP_FAULT_LOW" id="0x5314" description="Telmetry for FAULT state low threshold" type="F32"/>
+    <channel component="imx_mcpManager" name="MCP_FAULT_HIGH" id="0x5315" description="Telmetry for FAULT state high threshold" type="F32"/>
+    <channel component="imx_perifBoardManager" name="gpioState" id="0x5400" description="telemetry channel to report the state of the GPIO" type="Fw::Logic"/>
+    <channel component="imx_jetsonManager" name="JetsonPowerMode" id="0x5500" description="Current power mode of the Jetson as reported by JetsonPowerModeManager" type="scalesSvc::PowerModeID"/>
+    <channel component="imx_jetsonManager" name="JetsonPowerState" id="0x5501" description="Current power state of the Jetson" type="scalesSvc::JetsonPowerStateID"/>
+  </channels>
+  <parameters>
+    <parameter component="jetson_pwrModeManager" name="PWR_MODE_REQ" id="0x11700" default="0"/>
+    <parameter component="jetson_thermalManager" name="JETSON_IDLE_LOW" id="0x11800" default="10.0f"/>
+    <parameter component="jetson_thermalManager" name="JETSON_IDLE_HIGH" id="0x11801" default="60.0f"/>
+    <parameter component="jetson_thermalManager" name="JETSON_WARN_LOW" id="0x11802" default="-20.0f"/>
+    <parameter component="jetson_thermalManager" name="JETSON_WARN_HIGH" id="0x11803" default="80.0f"/>
+    <parameter component="jetson_thermalManager" name="JETSON_FAULT_LOW" id="0x11804" default="-40.0f"/>
+    <parameter component="jetson_thermalManager" name="JETSON_FAULT_HIGH" id="0x11805" default="100.0f"/>
+  </parameters>
+</dictionary>

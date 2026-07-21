@@ -23,4 +23,8 @@ scales-laptop
 user: scales
 pass: #AdAstra
 
+<<<<<<< HEAD
 wd_pin on the jetson is mapped as GPIO_32 in the kernel device tree, which corresponds to pin 13 on the hardware pinout
+=======
+wd_pin on the jetson is GPIO_27, Pin 15 on the Orin AGX
+>>>>>>> lucadev
