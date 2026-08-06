@@ -24,4 +24,5 @@ Then follow the standard BitBake process for the image using the instructions he
 https://scales-docs.readthedocs.io/en/latest/imx_yocto_bsp/
 
 
-
+2. This project contains a copy of the compiled JetsonDeployment from SCALES 1.3.0, it can be copied over to the Jetson and ran with `jetson-startup.sh`.
+Additionally the GDS-Dictionary can be run by using the contents of the GDS-Dictionary folder.
